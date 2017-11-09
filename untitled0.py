@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
 """
+Created on Thu Nov  9 13:18:02 2017
+
+@author: falah.fakhruddin
+"""
+# -*- coding: utf-8 -*-
+"""
 Spyder Editor
 
 This is a temporary script file.
@@ -16,14 +22,25 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 #Importing Dataset
-results = []
+results1 = []
+results2 = []
+condition = False
 with open('data3.txt') as inputfile:
     for line in inputfile:
-        results.append(line.strip().split(','))
-T2 = [list(map(float, x)) for x in results]
-dataset= np.array(T2)
-X= dataset[:, 0]
-Y= dataset[:, 1]
+        if condition == False:
+            if line != '---\n':
+                results1.append(line.strip().split(','))
+                
+            else:
+                condition = True
+        else:
+                results2.append(line.strip().split(','))
+T1 = [list(map(float, x)) for x in results1]
+T2 = [list(map(float, x)) for x in results2]
+dataset1= np.array(T1)
+dataset2= np.array(T2)
+X= dataset1[:, 0]
+Y= dataset1[:, 1]
 
 #SIgma X dan Y
 sig_X =0
@@ -48,7 +65,9 @@ y_mean=sig_Y/len(Y)
 x_mean=sig_X/len(X)
 c=y_mean-(m*x_mean)
 
-#gradien
-print (m)
-print (c)
+#print gradien
+
+print ("besar gradien =", m)
+print ("beasar koefisien =", c)
+
 
