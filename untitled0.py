@@ -48,6 +48,7 @@ y_mean=sig_Y/len(Y)
 x_mean=sig_X/len(X)
 c=y_mean-(m*x_mean)
 
+#gradien
 print (m)
 print (c)
 
