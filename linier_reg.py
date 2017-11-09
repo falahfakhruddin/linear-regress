@@ -37,7 +37,7 @@ if __name__ == '__main__':
     results2 = []
 
     condition = False
-    with open('data3.txt') as inputfile:
+    with open(temp[1]) as inputfile:
         for line in inputfile:
             if condition == False:
                 if line != '---\n':
