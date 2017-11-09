@@ -31,8 +31,9 @@ def import_dataset(a):
 if __name__ == '__main__':
 #Importing Dataset
     temp = sys.argv
-
-    print(int(data.getTemp()))
+    
+    print (temp)
+    
     results1 = []
     results2 = []
 
@@ -49,6 +50,7 @@ if __name__ == '__main__':
                     results2.append(line.strip().split(','))
     T1 = [list(map(float, x)) for x in results1]
     T2 = [list(map(float, x)) for x in results2]
+          
     dataset1= np.array(T1)
     dataset2= np.array(T2)
     
