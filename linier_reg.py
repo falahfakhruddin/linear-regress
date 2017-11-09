@@ -6,6 +6,7 @@ Created on Thu Nov  9 21:41:30 2017
 """
 import sys
 import pandas as pd 
+import numpy as np
 
 def sum_array(array1):
     return sum(array1)
