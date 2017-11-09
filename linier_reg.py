@@ -4,6 +4,8 @@ Created on Thu Nov  9 21:41:30 2017
 
 @author: falah.fakhruddin
 """
+import pandas as pd
+
 def sum_array(array1):
     return sum(array1)
     
@@ -31,8 +33,8 @@ def import_dataset(a):
 if __name__ == '__main__':
 #Importing Dataset
     temp = sys.argv
-    
-    print (temp)
+
+    print(temp)
     
     results1 = []
     results2 = []
