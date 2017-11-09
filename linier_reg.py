@@ -4,7 +4,8 @@ Created on Thu Nov  9 21:41:30 2017
 
 @author: falah.fakhruddin
 """
-import pandas as pd
+import sys
+import pandas as pd 
 
 def sum_array(array1):
     return sum(array1)
