@@ -1,0 +1,8 @@
+Hasil Perhitungan data ke- 1 : 
+Besar Gradien : 1.000000 
+Besar koefisien: 0.000000 
+
+Hasil Perhitungan data ke- 2 : 
+Besar Gradien : 15.342857 
+Besar koefisien: -88.590476 
+

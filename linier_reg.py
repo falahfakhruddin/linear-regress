@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Nov  9 21:41:30 2017
+Created on Fri Nov 10 08:53:13 2017
 
 @author: falah.fakhruddin
 """
+
 import sys
 import numpy as np
 
@@ -28,7 +29,7 @@ def import_dataset(a, c):
     Y= a[:, 1]
     grad  = calculate_gradient(sum_array(X), sum_array(Y), sum_array_product(X,Y), sum_array_product(X,X), len(X) )
     coeff = calculate_coefficient(sum_array(X), sum_array(Y), len(X), grad)
-    with open (temp[2], 'a') as hasil:
+    with open (temp[-1], 'a') as hasil:
         hasil.writelines("Hasil Perhitungan data ke- %d : \n" % c)
         hasil.writelines("Besar Gradien : %f \n" % grad)
         hasil.writelines("Besar koefisien: %f \n\n" % coeff)
@@ -39,31 +40,22 @@ if __name__ == '__main__':
 
     print(temp)
     
-    results1 = []
-    results2 = []
-
-    condition = False
+    results = []
+    list_result=[]
+    i = 1
+        
+    open(temp[-1],"w").close() 
+    
     with open(temp[1]) as inputfile:
         for line in inputfile:
-            if condition == False:
-                if line != '---\n':
-                    results1.append(line.strip().split(','))
-                 
-                else:
-                    condition = True
-            else:
-                    results2.append(line.strip().split(','))
-    T1 = [list(map(float, x)) for x in results1]
-    T2 = [list(map(float, x)) for x in results2]
-               
-    dataset1= np.array(T1)
-    dataset2= np.array(T2)
-    
-    open(temp[2],"w").close() 
-    
-    i=1
-    import_dataset(dataset1, 1)
-    i=2
-    import_dataset(dataset2, 2)
-
-    
+            if line != '---\n':
+                results.append(line.strip().split(','))
+            else: 
+                T1 = [list(map(float, x)) for x in results]
+                globals()['dataset%s'%i]=np.array(T1)
+                import_dataset(globals()['dataset%s'%i], i)
+                i+=1
+                results = []
+        T1 = [list(map(float, x)) for x in results]
+        globals()['dataset%s'%i]=np.array(T1)
+        import_dataset(globals()['dataset%s'%i], i)
