@@ -48,7 +48,7 @@ if __name__ == '__main__':
     
     with open(temp[1]) as inputfile:
         for line in inputfile:
-            if line == '---\n' or line == 'eof\n':                
+            if line == '---\n' or line == 'eof':                
                 T1 = [list(map(float, x)) for x in results]
                 import_dataset(np.array(T1), i)
                 i+=1
