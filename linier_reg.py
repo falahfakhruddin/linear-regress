@@ -29,7 +29,7 @@ def import_dataset(a, c):
     Y= a[:, 1]
     grad  = calculate_gradient(sum_array(X), sum_array(Y), sum_array_product(X,Y), sum_array_product(X,X), len(X) )
     coeff = calculate_coefficient(sum_array(X), sum_array(Y), len(X), grad)
-    with open (temp[1], 'a') as hasil:
+    with open (temp[-1], 'a') as hasil:
         hasil.writelines("Hasil Perhitungan data ke- %d : \n" % c)
         hasil.writelines("Besar Gradien : %f \n" % grad)
         hasil.writelines("Besar koefisien: %f \n\n" % coeff)
