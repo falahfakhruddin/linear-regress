@@ -48,14 +48,12 @@ if __name__ == '__main__':
     
     with open(temp[1]) as inputfile:
         for line in inputfile:
-            if line != '---\n':
-                results.append(line.strip().split(','))
-            else: 
+            if line == '---\n' or line == 'eof':                
                 T1 = [list(map(float, x)) for x in results]
-                globals()['dataset%s'%i]=np.array(T1)
-                import_dataset(globals()['dataset%s'%i], i)
+                import_dataset(np.array(T1), i)
                 i+=1
                 results = []
-        T1 = [list(map(float, x)) for x in results]
-        globals()['dataset%s'%i]=np.array(T1)
-        import_dataset(globals()['dataset%s'%i], i)
+            else: 
+                results.append(line.strip().split(','))
+
+    
