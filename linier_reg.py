@@ -43,17 +43,17 @@ if __name__ == '__main__':
     results = []
     list_result=[]
     i = 1
-        
+    j = 1
+    
     open(temp[-1],"w").close() 
     
-    with open(temp[1]) as inputfile:
-        for line in inputfile:
-            if line == '---\n' or line == 'eof':                
-                T1 = [list(map(float, x)) for x in results]
-                import_dataset(np.array(T1), i)
-                i+=1
-                results = []
-            else: 
-                results.append(line.strip().split(','))
-
-    
+    for j in range (1,len(temp)):
+        with open(temp[j]) as inputfile:
+            for line in inputfile:
+                if line == '---\n' or line == 'eof':                
+                    T1 = [list(map(float, x)) for x in results]
+                    import_dataset(np.array(T1), i)
+                    i+=1
+                    results = []
+                else: 
+                    results.append(line.strip().split(','))
