@@ -6,28 +6,16 @@ Created on Thu Nov  9 21:41:30 2017
 """
 import sys
 import numpy as np
-
-def sum_array(array1):
-    return sum(array1)
-    
-def sum_array_product(array1,array2):
-    return sum(array1*array2)
-
-def calculate_gradient(sum1, sum2, sum3, sum4, n):
-    sxy = sum3 - (sum1*sum2/n)
-    sxx = sum4 - (sum1*sum1/n)
-    return sxy/sxx
-    
-def calculate_coefficient(sum1, sum2, n, m):
-    x_mean = sum1/n
-    y_mean = sum2/n
-    return y_mean-(m*x_mean)
+from regression import Reg
     
 def import_dataset(a, c):  
     X= a[:, 0]
     Y= a[:, 1]
-    grad  = calculate_gradient(sum_array(X), sum_array(Y), sum_array_product(X,Y), sum_array_product(X,X), len(X) )
-    coeff = calculate_coefficient(sum_array(X), sum_array(Y), len(X), grad)
+    
+    Hasil = Reg(X, Y, len(Y))
+    grad  = Hasil.calculate_gradient()
+    coeff = Hasil.calculate_coefficient()
+    
     with open (temp[2], 'a') as hasil:
         hasil.writelines("Hasil Perhitungan data ke- %d : \n" % c)
         hasil.writelines("Besar Gradien : %f \n" % grad)
@@ -61,9 +49,7 @@ if __name__ == '__main__':
     
     open(temp[2],"w").close() 
     
-    i=1
     import_dataset(dataset1, 1)
-    i=2
     import_dataset(dataset2, 2)
 
     
