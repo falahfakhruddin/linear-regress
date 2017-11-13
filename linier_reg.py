@@ -17,8 +17,8 @@ def import_dataset(a, b, c):
     grad  = Hasil.calculate_gradient()
     coeff = Hasil.calculate_coefficient()
 
-    with open (temp[-1]+'-dataset %i.txt'%c, 'w') as hasil:
-        hasil.writelines("Hasil Perhitungan dataset %s" % b)
+    with open (temp[-1]+"-dataset %s.txt" %b, 'w') as hasil:
+        hasil.writelines("Hasil Perhitungan dataset %s:\n" % b)
         hasil.writelines("Besar Gradien : %f \n" % grad)
         hasil.writelines("Besar koefisien: %f \n\n" % coeff)
         hasil.close()
@@ -41,7 +41,8 @@ if __name__ == '__main__':
             for line in inputfile:
                                 
                 if condition == True:
-                   nama=line
+                   original=line
+                   nama=original.replace("\n","")
                    condition = False
                
                 elif line == '---\n' or line == 'eof': 
