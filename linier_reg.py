@@ -16,10 +16,12 @@ def import_dataset(a, b, c):
     Hasil = Reg(X, Y, len(Y))
     grad  = Hasil.calculate_gradient()
     coeff = Hasil.calculate_coefficient()
-    with open (temp[-1], 'a') as hasil:
-        hasil.writelines("Hasil Perhitungan dataset %s" % b)    
+
+    with open (temp[-1]+'-dataset %i.txt'%b, 'w') as hasil:
+        hasil.writelines("Hasil Perhitungan dataset %s" % b)
         hasil.writelines("Besar Gradien : %f \n" % grad)
         hasil.writelines("Besar koefisien: %f \n\n" % coeff)
+        hasil.close()
     
 if __name__ == '__main__':
 #Importing Dataset
