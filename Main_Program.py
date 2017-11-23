@@ -17,8 +17,8 @@ for j in range (1,len(temp)-1):
     if y[0] == 'naive-bayess':
         model = NaiveB()
         model.getValues(txtfile)
-        model.trainingMethod()
-        model.testingMethod("datates.txt",temp[-1])
+        model.trainingMethod(temp[-1])
+        model.testingMethod("datates.txt")
     else:
         model = Regression()
         model.getValues(txtfile)
