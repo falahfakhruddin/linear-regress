@@ -1,13 +1,13 @@
 from __future__ import division
 import sys
 import numpy as np
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 import collections
 import random as rn
 import json
 
-class MachineLearn(object):
-    __metaclass__ = ABCMeta
+class MachineLearn(ABC):
+    #__metaclass__ = ABCMeta
 
     @abstractmethod
     def trainingMethod(self):
@@ -22,8 +22,13 @@ class MachineLearn(object):
         pass
 
     @abstractmethod
-    def getValues(self):
-        pass
+    def importData(self, trainingFile):
+        with open(trainingFile , 'r') as file:
+            listFile = file.read().split()
+            listFile.pop(0)
+            file.close()
+        print (listFile)
+        return listFile
     
 class NaiveB(MachineLearn):
     def __init__(self):        
@@ -42,15 +47,17 @@ class NaiveB(MachineLearn):
         data=json.dumps(self.featuresDict, indent=4)
         output.writelines(str(data))
         output.close()                
+    
+    def importData (self, trainingFile):
+        listFile = super().importData(trainingFile)
+        self.getValues(listFile)
         
-    def getValues(self,trainingFile):
-        self.featuresDict['title']=trainingFile
-        file = open(trainingFile, 'r')
-        for line in file:
-            if line[0] == 'n':
-                pass
-                
-            elif line[0] != '@' :  #start of actual data
+    def getValues(self,listFile):
+        #self.featuresDict['title']=trainingFile
+        #file = open(trainingFile, 'r')
+        
+        for line in listFile:
+            if line[0] != '@' :  #start of actual data
                 self.featureVectors.append(line.strip().lower().split(','))
             
             else:   #feature definitions
@@ -72,8 +79,6 @@ class NaiveB(MachineLearn):
                 for line in unique:
                     temp = 1/(self.labelCounts[label]+len(unique))
                     self.featuresDict[label][self.featureNameList[i]].update({line : temp})  
-                     
-        file.close()
 
     def testingMethod(self, txtfile):       
         file = open(txtfile, 'r')
@@ -158,27 +163,31 @@ class Regression(MachineLearn):
             self.m = self.m - (self.learningRate * m_gradient)
         self.regress[self.key[j]]['Gradien']=self.m
         self.regress[self.key[j]]['Koefisien']=self.b
+    
+    def importData(self, trainingFile):
+        listFile = super().importData(trainingFile)
+        print (listFile)
+        self.getValues(listFile)
         
-    def getValues(self, trainingFile): 
+    def getValues(self, listFile): 
         result = []
         condition = True
-        self.regress['title']=trainingFile
-        with open(trainingFile,'r') as inputfile:
-            for line in inputfile:
-                if line[0] == 'L':
-                    self.regress['Algoritma']=line
-                elif condition == True:
-                    self.key.append(line.strip().replace('/n',''))
-                    self.dictGrad[self.key[self.feature]]={}
-                    condition = False
-                elif line[0] == '-':
-                    T1 = [list(map(float, x)) for x in result]
-                    self.dictGrad[self.key[self.feature]]=np.array(T1)
-                    result =[]
-                    condition = True
-                    self.feature +=1
-                elif line[0] != '@':
-                    result.append(line.strip().split(','))
+        #self.regress['title']=trainingFile
+        #with open(trainingFile,'r') as inputfile:
+   
+        for line in listFile:
+            if condition == True:
+                self.key.append(line.strip().replace('/n',''))
+                self.dictGrad[self.key[self.feature]]={}
+                condition = False
+            elif line[0] == '-':
+                T1 = [list(map(float, x)) for x in result]
+                self.dictGrad[self.key[self.feature]]=np.array(T1)
+                result =[]
+                condition = True
+                self.feature +=1
+            elif line[0] != '@':
+                result.append(line.strip().split(','))
     
     def testingMethod(self, trainingFile):
         results1 = []
