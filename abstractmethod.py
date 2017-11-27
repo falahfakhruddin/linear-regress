@@ -4,6 +4,7 @@ import numpy as np
 from abc import ABCMeta, abstractmethod
 import collections
 import random as rn
+import json
 
 class MachineLearn(object):
     __metaclass__ = ABCMeta
@@ -37,16 +38,13 @@ class NaiveB(MachineLearn):
                 temp = 1/(self.labelCounts[fv[-1]] + len(self.featuresDict[fv[-1]][self.featureNameList[counter]]))
                 self.featuresDict[fv[len(fv)-1]][self.featureNameList[counter]][fv[counter]] += temp
       
-        output = open('%s-NaiveBayess.txt' %out,'w')
-        output.writelines('Play Tennis Likelihood \n\n')
-        for label in self.labelCounts:
-            for fn in self.featureNameList[:-1]:
-                for file in self.featuresDict[label][fn]: 
-                    output.writelines("P({0}|{1}) : {2} \n".format(label, file, self.featuresDict[label][fn][file]))
-        output.writelines('\nModeled by Naive-Bayess Classification Method')
-        output.close()                 
+        output = open('%s-NaiveBayess.txt' %out,'w')        
+        data=json.dumps(self.featuresDict, indent=4)
+        output.writelines(str(data))
+        output.close()                
         
     def getValues(self,trainingFile):
+        self.featuresDict['title']=trainingFile
         file = open(trainingFile, 'r')
         for line in file:
             if line[0] == 'n':
@@ -64,7 +62,7 @@ class NaiveB(MachineLearn):
             self.featuresDict[fv[-1]] ={}
         
         z=np.array(self.featureVectors)
-        for i in range (0,len(self.featureNameList)):
+        for i in range (0,len(self.featureNameList)-1):
             y=z[:,i]
             unique=[]
             used = set()
@@ -101,19 +99,33 @@ class Regression(MachineLearn):
         self.testX= []
         self.trainY= []
         self.testY= []
+        self.dictGrad={}
         self.m=0
         self.b=0
+        self.feature=0
         self.iteration=10000
-        self.learningRate=0.01        
+        self.learningRate=0.01
+        self.key=[]
+        self.regress={}        
     
-    def trainingMethod(self, i=None):
-        if i is None:
-            self.gradientDescent()
-            
-        else:
-            self.statRegression()
-  
-    def statRegression (self):    
+    def trainingMethod(self, out, i=None):
+        for x in range(0,self.feature):
+            self.trainX = self.dictGrad[self.key[x]][:, 0]
+            self.trainY = self.dictGrad[self.key[x]][:, 1]
+            self.regress[self.key[x]]={}
+
+            if i is None:
+                self.gradientDescent(x)
+                
+            else:
+                self.statRegression(x)
+                
+        output = open('%s-LinearRegression.txt' %out,'w')
+        data=json.dumps(self.regress, indent=4)
+        output.writelines(str(data))
+        output.close()
+        
+    def statRegression (self, x):    
         n=len(self.trainX)
         #calculate gradient
         sum_x= sum(self.trainX)
@@ -123,60 +135,69 @@ class Regression(MachineLearn):
         sxy = sum_xy - (sum_x * sum_y / n)
         sxx = sum_xx - (sum_x * sum_x / n)
         self.m= sxy/sxx
+        self.regress[self.key[x]]['Gradien']=self.m
+
         #calculate coefficient
         x_mean = sum(self.trainX)/n
         y_mean = sum(self.trainY)/n
         self.b=y_mean-(self.m * x_mean)
-        print(self.m,':',self.b)
+        self.regress[self.key[x]]['Koefisien']=self.b
+        
  
-    def gradientDescent(self):
+    def gradientDescent(self, j):
         for i in range(self.iteration):
             b_gradient = 0
             m_gradient = 0
             N = len(self.trainX)
             for i in range(0, N):
                 x = self.trainX[i]
-                y = self.trainX[i]
+                y = self.trainY[i]
                 b_gradient += -(2/N) * (y - ((self.m * x) + self.b))
                 m_gradient += -(2/N) * x * (y - ((self.m * x) + self.b ))
             self.b = self.b - (self.learningRate * b_gradient)
             self.m = self.m - (self.learningRate * m_gradient)
-        print (self.b,':',self.m)
+        self.regress[self.key[j]]['Gradien']=self.m
+        self.regress[self.key[j]]['Koefisien']=self.b
         
-    def getValues(self, trainingFile):
-        results1 = []
+    def getValues(self, trainingFile): 
+        result = []
+        condition = True
+        self.regress['title']=trainingFile
         with open(trainingFile,'r') as inputfile:
             for line in inputfile:
-                if line[0] != '@' and line.split()[0] != 'linear-regression':
-                    results1.append(line.strip().split(','))
-        T1 = [list(map(float, x)) for x in results1]
-        dataset1= np.array(T1)
-        self.trainX = dataset1[:, 0]
-        self.trainY = dataset1[:,1]
+                if line[0] == 'L':
+                    self.regress['Algoritma']=line
+                elif condition == True:
+                    self.key.append(line.strip().replace('/n',''))
+                    self.dictGrad[self.key[self.feature]]={}
+                    condition = False
+                elif line[0] == '-':
+                    T1 = [list(map(float, x)) for x in result]
+                    self.dictGrad[self.key[self.feature]]=np.array(T1)
+                    result =[]
+                    condition = True
+                    self.feature +=1
+                elif line[0] != '@':
+                    result.append(line.strip().split(','))
     
-    def testingMethod(self, trainingFile, temp):
+    def testingMethod(self, trainingFile):
         results1 = []
         with open(trainingFile) as inputfile:
             for line in inputfile:
                 if line[0] != '@' and line.split()[0] != 'linear-regression':
                     results1.append(line.strip().split(','))
+        
         T1 = [list(map(float, x)) for x in results1]
         dataset1= np.array(T1)
         self.testX= dataset1[:, 0]
         self.testY=dataset1[:,1]
+
+        #kalkulasi 
         error =0
         for i in range(0,len(self.testY)):
             error += abs(self.testY[i]-self.predict(i))
-        print('Error :',error)
+        print('\nError :',error)
         
-        #Outputing file
-        with open (temp +"-LinearReg.txt", 'w') as hasil:
-            hasil.writelines("Hasil Perhitungan dataset:\n" )
-            hasil.writelines("Besar Gradien : %f \n" % self.m)
-            hasil.writelines("Besar koefisien: %f \n\n" % self.b)
-            hasil.writelines("kalkulasi menggunakan Linear Regression")
-            hasil.close()
-            
     def predict(self,i):
         return self.m*self.testX[i]+self.b
 
@@ -190,13 +211,16 @@ class SplitValidation():
         self.splittingData()
         
     def splittingData(self):        
-        with open(self.file, "r") as f:
+        with open('data4.txt', "r") as f:
             data = f.read().split()
-        select=data[1:]
+        select=data[3:]
+        title=data[0]
+        data.pop(0)
+        data.insert(0,title)
         rn.shuffle(select)
         for i in range(0,len(select)):
-            data[i+1]=select[i]
-        amount=int(len(data)*self.size) #the amount of training data
+            data[i+3]=select[i]
+        amount=int(len(data)*0.6) #the amount of training data
         train_data = data[:amount]
         test_data = data[amount:]
         
@@ -210,9 +234,9 @@ class SplitValidation():
                 file.writelines(str(test_data[i]).replace("'","")+"\n")
             file.writelines(str(test_data[-1]).replace("'",""))
          
-    def runValidation(self):
+    def runValidation(self,out):
         self.temp.getValues(self.trainFile)
-        self.temp.trainingMethod()
+        self.temp.trainingMethod(out)
         self.temp.testingMethod(self.testFile)
   
 if __name__ == "__main__":

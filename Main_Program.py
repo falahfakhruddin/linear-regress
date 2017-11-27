@@ -22,5 +22,14 @@ for j in range (1,len(temp)-1):
     else:
         model = Regression()
         model.getValues(txtfile)
-        model.trainingMethod()
-        model.testingMethod('data4.txt',temp[-1])
+        model.trainingMethod(temp[-1])
+        #model.testingMethod('data4.txt')
+        
+        
+"""        
+dictionary={'BRI': {'Gradien': 0.99999999997024835, 'Koefisien': 1.3309494659541973e-10}, 'PERMATA': {'Gradien': 3.976190476182961, 'Koefisien': -16.190476190400137}, 'Title': 'data3.txt', 'BTN': {'Gradien': 1.7000000007962246, 'Koefisien': 0.99999999643806037}, 'BANK MEGA': {'Gradien': 5.1999999993160451, 'Koefisien': -4.199999996940301}}
+json=pickle.dumps(dictionary)
+file= open('file.txt', 'w')
+file.write(json)
+file.close()
+"""
