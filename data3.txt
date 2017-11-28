@@ -1,4 +1,5 @@
 Linear-Regression
+@x,@y
 BRI
 2,2
 3,3

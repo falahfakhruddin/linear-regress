@@ -8,5 +8,5 @@ import sys
 temp=sys.argv
 from abstractmethod import  MachineLearn, NaiveB, Regression, SplitValidation
 
-SV=SplitValidation("data4.txt",Regression(),0.6) #input data must begin with '@'
+SV=SplitValidation("trainset.txt",NaiveB(),0.5) #input data must begin with '@'
 SV.runValidation(temp[-1])

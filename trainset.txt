@@ -14,3 +14,4 @@ sunny,mild,normal,true,yes
 overcast,mild,high,true,yes
 overcast,hot,normal,false,yes
 rainy,mild,high,true,no
+----------------------------

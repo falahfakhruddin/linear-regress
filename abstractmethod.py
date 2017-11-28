@@ -52,15 +52,12 @@ class NaiveB(MachineLearn):
         listFile = super().importData(trainingFile)
         self.getValues(listFile)
         
-    def getValues(self,listFile):
-        #self.featuresDict['title']=trainingFile
-        #file = open(trainingFile, 'r')
-        
+    def getValues(self,listFile):      
         for line in listFile:
-            if line[0] != '@' :  #start of actual data
+            if line[0] != '@' and line[0] != "-" :  #start of actual data
                 self.featureVectors.append(line.strip().lower().split(','))
             
-            else:   #feature definitions
+            elif line[0] != "-":   #feature definitions
                 for x in range (0, len(line.strip().split(','))):
                     self.featureNameList.append(line.strip().split(',')[x].replace('@',''))
                     
@@ -114,10 +111,11 @@ class Regression(MachineLearn):
         self.regress={}        
     
     def trainingMethod(self, out, i=None):
+        self.regress["Gradien"]={}
+        self.regress["Koefisien"]={}
         for x in range(0,self.feature):
             self.trainX = self.dictGrad[self.key[x]][:, 0]
             self.trainY = self.dictGrad[self.key[x]][:, 1]
-            self.regress[self.key[x]]={}
 
             if i is None:
                 self.gradientDescent(x)
@@ -140,13 +138,13 @@ class Regression(MachineLearn):
         sxy = sum_xy - (sum_x * sum_y / n)
         sxx = sum_xx - (sum_x * sum_x / n)
         self.m= sxy/sxx
-        self.regress[self.key[x]]['Gradien']=self.m
+        self.regress['Gradien'][self.key[x]]=self.m
 
         #calculate coefficient
         x_mean = sum(self.trainX)/n
         y_mean = sum(self.trainY)/n
         self.b=y_mean-(self.m * x_mean)
-        self.regress[self.key[x]]['Koefisien']=self.b
+        self.regress['Koefisien'][self.key[x]]=self.b
         
  
     def gradientDescent(self, j):
@@ -161,8 +159,8 @@ class Regression(MachineLearn):
                 m_gradient += -(2/N) * x * (y - ((self.m * x) + self.b ))
             self.b = self.b - (self.learningRate * b_gradient)
             self.m = self.m - (self.learningRate * m_gradient)
-        self.regress[self.key[j]]['Gradien']=self.m
-        self.regress[self.key[j]]['Koefisien']=self.b
+        self.regress['Gradien'][self.key[j]]=self.m
+        self.regress['Koefisien'][self.key[j]]=self.b
     
     def importData(self, trainingFile):
         listFile = super().importData(trainingFile)
@@ -176,7 +174,7 @@ class Regression(MachineLearn):
         #with open(trainingFile,'r') as inputfile:
    
         for line in listFile:
-            if condition == True:
+            if condition == True and line[0] != '@':
                 self.key.append(line.strip().replace('/n',''))
                 self.dictGrad[self.key[self.feature]]={}
                 condition = False
@@ -211,42 +209,62 @@ class Regression(MachineLearn):
         return self.m*self.testX[i]+self.b
 
 class SplitValidation():
-    def __init__(self,validationFile,model,size=0.7):
-        self.trainFile="train.txt"
-        self.testFile="test.txt"
-        self.file=validationFile
-        self.temp=model
-        self.size=size
+    def __init__(self,validationFile,model,size=0.5):
+        self.trainList = []
+        self.testList = []
+        self.file = validationFile
+        self.type = model
+        self.size = size
         self.splittingData()
         
-    def splittingData(self):        
-        with open('data4.txt', "r") as f:
+    def splittingData(self): 
+        temp=[]
+        with open(self.file, "r") as f:
             data = f.read().split()
-        select=data[3:]
-        title=data[0]
+            condition = self.selectCondition(data)
+            data.pop(0) #delete Title
+        self.trainList.append(data[0]) #append @ line to Train List
+        self.testList.append(data[0]) #append @ line to Test List
         data.pop(0)
-        data.insert(0,title)
-        rn.shuffle(select)
-        for i in range(0,len(select)):
-            data[i+3]=select[i]
-        amount=int(len(data)*0.6) #the amount of training data
-        train_data = data[:amount]
-        test_data = data[amount:]
         
-        with open(self.trainFile,"w") as file:
-            for i in range (0,len(train_data)-1):
-                file.writelines(str(train_data[i]).replace("'","")+"\n")
-            file.writelines(str(train_data[-1]).replace("'",""))
-            
-        with open(self.testFile,"w") as file:
-            for i in range (0,len(test_data)-1):
-                file.writelines(str(test_data[i]).replace("'","")+"\n")
-            file.writelines(str(test_data[-1]).replace("'",""))
-         
+        for line in data:
+            if condition == True:
+                self.trainList.append(line.strip())
+                self.testList.append(line.strip())
+                condition = False
+            else:
+                if line[0] != "-" :
+                    temp.append(line.strip())
+                else:
+                    self.shuffleData(temp)
+                    self.trainList.append(line.strip())
+                    self.testList.append(line.strip())
+                    temp=[]
+                    condition = True
+        print (self.trainList)
+        print (self.testList)
+        
+                    
+    def shuffleData(self, temp):
+        rn.shuffle(temp)
+        print (temp)
+        amount=int(len(temp)*self.size)+1
+        for i in range (0,len(temp)):
+            if i < amount:
+                self.trainList.append(temp[i])
+            else:
+                self.testList.append(temp[i])
+                
+    def selectCondition(self,data):
+        if data[0] == "Linear-Regression":
+            return True
+        else:
+            return False 
+                   
     def runValidation(self,out):
-        self.temp.getValues(self.trainFile)
-        self.temp.trainingMethod(out)
-        self.temp.testingMethod(self.testFile)
+        self.type.getValues(self.trainList)
+        self.type.trainingMethod(out)
+        #self.type.testingMethod(self.testFile)
   
 if __name__ == "__main__":
     temp=sys.argv
