@@ -16,14 +16,17 @@ for j in range (1,len(temp)-1):
         y=inputfile.read().split()
     if y[0] == 'naive-bayess':
         model = NaiveB()
-        model.importData(txtfile)
+        trainFile = model.importData(txtfile)
+        model.getValues(trainFile)
         model.trainingMethod(temp[-1])
-        model.testingMethod("datates.txt")
+        testFile = model.importData(txtfile)
+        model.testingMethod(testFile)
     else:
         model = Regression()
-        model.importData(txtfile)
+        listFile = model.importData(txtfile)
+        model.getValues(listFile)
         model.trainingMethod(temp[-1])
-        #model.testingMethod('data4.txt')
+        model.testingMethod('data4.txt')
         
         
 """        

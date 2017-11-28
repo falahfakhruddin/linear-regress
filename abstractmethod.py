@@ -49,8 +49,7 @@ class NaiveB(MachineLearn):
         output.close()                
     
     def importData (self, trainingFile):
-        listFile = super().importData(trainingFile)
-        self.getValues(listFile)
+        return super().importData(trainingFile)
         
     def getValues(self,listFile):      
         for line in listFile:
@@ -77,10 +76,9 @@ class NaiveB(MachineLearn):
                     temp = 1/(self.labelCounts[label]+len(unique))
                     self.featuresDict[label][self.featureNameList[i]].update({line : temp})  
 
-    def testingMethod(self, txtfile):       
-        file = open(txtfile, 'r')
-        for line in file: 
-            if line[0] != '@':
+    def testingMethod(self, testFile):       
+        for line in testFile: 
+            if line[0] != '@' and line[0] != "-":
                 vector = line.strip().lower().split(',')
                 print("classifier: %s ," % self.predict(vector) + "given : %s \n" %vector[-1])
 
@@ -88,11 +86,11 @@ class NaiveB(MachineLearn):
         probabilityPerLabel = {} 
         for label in self.labelCounts:
             tempProb = 1
-            for featureValue in featureVector[:-1]:
+            for featureValue in featureVector[:4]:
                 tempProb *= self.featuresDict[label][self.featureNameList[featureVector.index(featureValue)]][featureValue]
             tempProb *= self.labelCounts[label]
             probabilityPerLabel[label]=tempProb
-        #print (probabilityPerLabel)
+        print (probabilityPerLabel)
         return max(probabilityPerLabel, key = lambda classLabel: probabilityPerLabel[classLabel])
           
 class Regression(MachineLearn):
@@ -122,7 +120,7 @@ class Regression(MachineLearn):
                 
             else:
                 self.statRegression(x)
-                
+        
         output = open('%s-LinearRegression.txt' %out,'w')
         data=json.dumps(self.regress, indent=4)
         output.writelines(str(data))
@@ -163,15 +161,11 @@ class Regression(MachineLearn):
         self.regress['Koefisien'][self.key[j]]=self.b
     
     def importData(self, trainingFile):
-        listFile = super().importData(trainingFile)
-        print (listFile)
-        self.getValues(listFile)
+        return super().importData(trainingFile)
         
     def getValues(self, listFile): 
         result = []
         condition = True
-        #self.regress['title']=trainingFile
-        #with open(trainingFile,'r') as inputfile:
    
         for line in listFile:
             if condition == True and line[0] != '@':
@@ -187,12 +181,11 @@ class Regression(MachineLearn):
             elif line[0] != '@':
                 result.append(line.strip().split(','))
     
-    def testingMethod(self, trainingFile):
+    def testingMethod(self, testFile):
         results1 = []
-        with open(trainingFile) as inputfile:
-            for line in inputfile:
-                if line[0] != '@' and line.split()[0] != 'linear-regression':
-                    results1.append(line.strip().split(','))
+        for line in testFile:
+            if line[0] != '@':
+                results1.append(line.strip().split(','))
         
         T1 = [list(map(float, x)) for x in results1]
         dataset1= np.array(T1)
@@ -264,7 +257,7 @@ class SplitValidation():
     def runValidation(self,out):
         self.type.getValues(self.trainList)
         self.type.trainingMethod(out)
-        #self.type.testingMethod(self.testFile)
+        self.type.testingMethod(self.testList)
   
 if __name__ == "__main__":
     temp=sys.argv
