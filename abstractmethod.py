@@ -121,11 +121,16 @@ class Regression(MachineLearn):
             else:
                 self.statRegression(x)
         
+
         output = open('%s-LinearRegression.txt' %out,'w')
         data=json.dumps(self.regress, indent=4)
         output.writelines(str(data))
         output.close()
         
+        self.dictGrad={}
+        self.feature=0
+        self.key=[]   
+  
     def statRegression (self, x):    
         n=len(self.trainX)
         #calculate gradient
@@ -150,15 +155,17 @@ class Regression(MachineLearn):
             b_gradient = 0
             m_gradient = 0
             N = len(self.trainX)
+            
             for i in range(0, N):
-                x = self.trainX[i]
+                x = self.trainX[i] 
                 y = self.trainY[i]
-                b_gradient += -(2/N) * (y - ((self.m * x) + self.b))
-                m_gradient += -(2/N) * x * (y - ((self.m * x) + self.b ))
-            self.b = self.b - (self.learningRate * b_gradient)
-            self.m = self.m - (self.learningRate * m_gradient)
-        self.regress['Gradien'][self.key[j]]=self.m
-        self.regress['Koefisien'][self.key[j]]=self.b
+                b_gradient += -(2/N) * (y - ((self.m * x) + self.b)) #update gradient value
+                m_gradient += -(2/N) * x * (y - ((self.m * x) + self.b )) #update coefficient value
+            self.b = self.b - (self.learningRate * b_gradient) #calculate coefficient
+            self.m = self.m - (self.learningRate * m_gradient) #calculate gradient
+            
+        self.regress['Gradien'][self.key[j]]=self.m #input coefficient into dictionary
+        self.regress['Koefisien'][self.key[j]]=self.b #input gradient into dictionary
     
     def importData(self, trainingFile):
         return super().importData(trainingFile)
@@ -168,20 +175,32 @@ class Regression(MachineLearn):
         condition = True
    
         for line in listFile:
-            if condition == True and line[0] != '@':
+            if condition == True and line[0] != '@': #initiate key for dictionary
                 self.key.append(line.strip().replace('/n',''))
                 self.dictGrad[self.key[self.feature]]={}
                 condition = False
-            elif line[0] == '-':
+            elif line[0] == '-': #input value to dictionary per each category
                 T1 = [list(map(float, x)) for x in result]
                 self.dictGrad[self.key[self.feature]]=np.array(T1)
                 result =[]
                 condition = True
                 self.feature +=1
-            elif line[0] != '@':
+            elif line[0] != '@': #collect value per category
                 result.append(line.strip().split(','))
     
-    def testingMethod(self, testFile):
+    def testingMethod(self,testFile):
+        self.getValues(testFile)
+        print (self.dictGrad)
+        for x in range(0,self.feature):
+            self.testX = self.dictGrad[self.key[x]][:, 0]
+            self.testY = self.dictGrad[self.key[x]][:, 1]
+            self.m = self.regress['Gradien'][self.key[x]]
+            self.b = self.regress['Koefisien'][self.key[x]]
+            error =0
+            for i in range(0,len(self.testY)):
+                error += self.testY[i]-self.predict(i)
+            print('\nError-%s:' %self.key[x], abs(error))
+        """
         results1 = []
         for line in testFile:
             if line[0] != '@':
@@ -197,7 +216,7 @@ class Regression(MachineLearn):
         for i in range(0,len(self.testY)):
             error += abs(self.testY[i]-self.predict(i))
         print('\nError :',error)
-        
+      """  
     def predict(self,i):
         return self.m*self.testX[i]+self.b
 

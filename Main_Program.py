@@ -23,10 +23,11 @@ for j in range (1,len(temp)-1):
         model.testingMethod(testFile)
     else:
         model = Regression()
-        listFile = model.importData(txtfile)
-        model.getValues(listFile)
+        trainFile = model.importData(txtfile)
+        model.getValues(trainFile)
         model.trainingMethod(temp[-1])
-        model.testingMethod('data4.txt')
+        testFile = model.importData(txtfile)
+        model.testingMethod(testFile)
         
         
 """        
