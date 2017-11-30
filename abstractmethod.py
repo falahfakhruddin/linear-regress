@@ -36,19 +36,22 @@ class NaiveB(MachineLearn):
         self.featuresDict={}
         self.featureNameList=[]
         self.labelCounts = collections.defaultdict(lambda: 0)
+        self.datasetNB=[]
                  
     def trainingMethod(self,out):
         for fv in self.featureVectors:
             for counter in range(0, len(fv)-1):
                 temp = 1/(self.labelCounts[fv[-1]] + len(self.featuresDict[fv[-1]][self.featureNameList[counter]]))
                 self.featuresDict[fv[len(fv)-1]][self.featureNameList[counter]][fv[counter]] += temp
-      
+            
+        self.datasetNB.append(self.featuresDict)
         output = open('%s-NaiveBayess.txt' %out,'w')        
-        data=json.dumps(self.featuresDict, indent=4)
+        data=json.dumps(self.datasetNB, indent=4)
         output.writelines(str(data))
         output.close()                
     
     def importData (self, trainingFile):
+        print (trainingFile)
         return super().importData(trainingFile)
         
     def getValues(self,listFile):      
@@ -59,7 +62,7 @@ class NaiveB(MachineLearn):
             elif line[0] != "-":   #feature definitions
                 for x in range (0, len(line.strip().split(','))):
                     self.featureNameList.append(line.strip().split(',')[x].replace('@',''))
-                    
+        self.featuresDict["Dataset_Name"]="Play Tennis"             
         for fv in self.featureVectors:
             self.labelCounts[fv[len(fv)-1]] += 1 #udpate count of the label
             self.featuresDict[fv[-1]] ={}
@@ -103,27 +106,29 @@ class Regression(MachineLearn):
         self.m=0
         self.b=0
         self.feature=0
-        self.iteration=10000
-        self.learningRate=0.01
+        self.error=0.00001
+        self.learningRate=0.0001
         self.key=[]
-        self.regress={}        
+        self.regress={}
+        self.iteration = 1000
+        self.datasetArr=[]
     
     def trainingMethod(self, out, i=None):
-        self.regress["Gradien"]={}
-        self.regress["Koefisien"]={}
         for x in range(0,self.feature):
             self.trainX = self.dictGrad[self.key[x]][:, 0]
             self.trainY = self.dictGrad[self.key[x]][:, 1]
+            self.regress["Dataset_Name"]=self.key[x]
 
             if i is None:
                 self.gradientDescent(x)
                 
             else:
                 self.statRegression(x)
-        
-
+                
+            self.datasetArr.append(self.regress)
+            self.regress={}
         output = open('%s-LinearRegression.txt' %out,'w')
-        data=json.dumps(self.regress, indent=4)
+        data=json.dumps(self.datasetArr, indent=4)
         output.writelines(str(data))
         output.close()
         
@@ -141,17 +146,21 @@ class Regression(MachineLearn):
         sxy = sum_xy - (sum_x * sum_y / n)
         sxx = sum_xx - (sum_x * sum_x / n)
         self.m= sxy/sxx
-        self.regress['Gradien'][self.key[x]]=self.m
+        self.regress['Gradien']=self.m
 
         #calculate coefficient
         x_mean = sum(self.trainX)/n
         y_mean = sum(self.trainY)/n
         self.b=y_mean-(self.m * x_mean)
-        self.regress['Koefisien'][self.key[x]]=self.b
+        self.regress['Koefisien']=self.b
         
  
     def gradientDescent(self, j):
-        for i in range(self.iteration):
+        #condition=True
+        #for i in range(self.iteration):
+        #iteration = 0
+
+        while True:
             b_gradient = 0
             m_gradient = 0
             N = len(self.trainX)
@@ -161,11 +170,17 @@ class Regression(MachineLearn):
                 y = self.trainY[i]
                 b_gradient += -(2/N) * (y - ((self.m * x) + self.b)) #update gradient value
                 m_gradient += -(2/N) * x * (y - ((self.m * x) + self.b )) #update coefficient value
+
+            temp_m = self.m
+            temp_b = self.b
             self.b = self.b - (self.learningRate * b_gradient) #calculate coefficient
             self.m = self.m - (self.learningRate * m_gradient) #calculate gradient
             
-        self.regress['Gradien'][self.key[j]]=self.m #input coefficient into dictionary
-        self.regress['Koefisien'][self.key[j]]=self.b #input gradient into dictionary
+            if abs(temp_m-self.m) < self.error and abs(temp_b-self.b) < self.error:
+                  break
+        
+        self.regress['Gradien']=self.m #input coefficient into dictionary
+        self.regress['Koefisien']=self.b #input gradient into dictionary
     
     def importData(self, trainingFile):
         return super().importData(trainingFile)
@@ -190,33 +205,18 @@ class Regression(MachineLearn):
     
     def testingMethod(self,testFile):
         self.getValues(testFile)
-        print (self.dictGrad)
         for x in range(0,self.feature):
+            self.regress = self.datasetArr[x]
             self.testX = self.dictGrad[self.key[x]][:, 0]
             self.testY = self.dictGrad[self.key[x]][:, 1]
-            self.m = self.regress['Gradien'][self.key[x]]
-            self.b = self.regress['Koefisien'][self.key[x]]
+            self.m = self.regress['Gradien']
+            self.b = self.regress['Koefisien']
             error =0
             for i in range(0,len(self.testY)):
-                error += self.testY[i]-self.predict(i)
-            print('\nError-%s:' %self.key[x], abs(error))
-        """
-        results1 = []
-        for line in testFile:
-            if line[0] != '@':
-                results1.append(line.strip().split(','))
-        
-        T1 = [list(map(float, x)) for x in results1]
-        dataset1= np.array(T1)
-        self.testX= dataset1[:, 0]
-        self.testY=dataset1[:,1]
+                error += (self.testY[i]-self.predict(i))**2
+            error = error / len(self.testY)
+            print('\nMSE-%s:' %self.key[x], abs(error))
 
-        #kalkulasi 
-        error =0
-        for i in range(0,len(self.testY)):
-            error += abs(self.testY[i]-self.predict(i))
-        print('\nError :',error)
-      """  
     def predict(self,i):
         return self.m*self.testX[i]+self.b
 
@@ -235,6 +235,7 @@ class SplitValidation():
             data = f.read().split()
             condition = self.selectCondition(data)
             data.pop(0) #delete Title
+            f.close()
         self.trainList.append(data[0]) #append @ line to Train List
         self.testList.append(data[0]) #append @ line to Test List
         data.pop(0)
@@ -283,6 +284,7 @@ if __name__ == "__main__":
     txtfile="trainset.txt"
     with open(txtfile,'r') as inputfile:
         y=inputfile.read().split()
+        inputfile.close()
     if y[0] == 'naive-bayess':
         model = NaiveB()
         model.getValues(txtfile)
