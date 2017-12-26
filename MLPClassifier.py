@@ -3,21 +3,22 @@ SECTION 1 : Load and setup data for training
 """
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier
-
-class Normalization():
-
-      def fit(self, data):
-            self.data_min=np.min(data, axis=0)
-            self.data_max=np.max(data, axis=0)
-            self.data_range = self.data_max - self.data_min
-            
-      def transform(self, data):
-            for i  in range (0,data.shape[1]):
-                  for j in range (0,data.shape[0]):
-                        data[j][i] = (data[j][i] - self.data_min[i]) / (self.data_max[i]-self.data_min[i])
-            return data
+from numpy.random import shuffle
+     
+def train_test_split(dataset, test_size = 0.60):
+      train_size = int(test_size * len(dataset))
+      shuffle(dataset)
+      train = dataset[:train_size]
+      dataset = np.delete(dataset, np.s_[0:train_size], axis = 0)
+      train = np.array_split(train, [-1], axis = 1)
+      test = np.array_split(dataset, [-1], axis = 1)
+      X_train = np.array(train[0])
+      y_train = train[1]
+      X_test = test[0]
+      y_test = test[1]
+      return X_train, X_test, y_train, y_test
+      
 # Load dataset
 datatrain = pd.read_csv('irisdataset.csv')
 
@@ -28,11 +29,10 @@ datatrain.set_value(datatrain['species']=='Iris-virginica',['species'],2)
 datatrain = datatrain.apply(pd.to_numeric)
 
 # Change dataframe to array
-datatrain_array = datatrain.as_matrix()
+dataset = datatrain.as_matrix()
 
 # Split x and y (feature and target)
-X_train, X_test, y_train, y_test = train_test_split(datatrain_array[:,:4],
-                                                    datatrain_array[:,4],
+X_train, X_test, y_train, y_test = train_test_split(dataset, 
                                                     test_size=0.2)
 normalize = Normalization()
 normalize.fit(X_train)
