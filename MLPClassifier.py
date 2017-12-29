@@ -1,6 +1,4 @@
-"""
-SECTION 1 : Load and setup data for training
-"""
+
 import numpy as np
 import pandas as pd
 from sklearn.neural_network import MLPClassifier
