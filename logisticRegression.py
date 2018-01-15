@@ -4,76 +4,124 @@ Created on Fri Dec  8 13:28:20 2017
 
 @author: falah.fakhruddin
 """
-
+import sys
 import numpy as np
 from pymongo import MongoClient
 import pandas as pd
 
-class logisticRegression ():
+class LogisticRegression ():
       def sigmoid(self, scores):
           return 1 / (1 + np.exp(-scores))
       
-      def trainingMethod(self, features, target, num_steps, learning_rate, add_intercept = False):
+      def trainingMethod(self, features, target, num_steps=50000, learning_rate=5e-5, add_intercept = True):
+          #adding extra features for coefficient parameter  
           if add_intercept:
               intercept = np.ones((features.shape[0], 1))
-              features = np.hstack((intercept, features))    
-        
-          self.weights = np.zeros(features.shape[1])
-       
-          for step in range(num_steps):
-              scores = np.dot(features, self.weights)
-              predictions = self.sigmoid(scores)
-      
-              # Update weights with log likelihood gradient
-              output_error_signal = target - predictions
+              features = np.hstack((intercept, features)) 
               
-              gradient = np.dot(features.T, output_error_signal)
-              self.weights += learning_rate * gradient
-              
-          return weights  
+          self.uniqueTarget = np.unique(target) #get unique value of target 
+          self.listWeights=[]
+
+          for kind in range (len(self.uniqueTarget)): #looping for each unique target
+                #set binary value for unique target
+                dfTarget = pd.DataFrame(target)
+                dfTarget.set_value(dfTarget[0]!= uniqueTarget[kind],[0],0)
+                dfTarget.set_value(dfTarget[0]== uniqueTarget[kind],[0],1)
+                numericalTarget = dfTarget.iloc[:,-1].values.astype(int)
+                
+                #initiate weights value
+                weights = np.zeros(features.shape[1])
+                
+                #gradient descent step
+                for step in range(num_steps):
+                    scores = np.dot(features, weights) #calculate prediction value
+                    predictions = self.sigmoid(scores) #transform with sigmoid function
+            
+                    # delta error of real value and predict value
+                    output_error_signal = numericalTarget - predictions
+                    
+                    gradient = np.dot(features.T, output_error_signal) #value of derivative function for each parameter
+                    weights += learning_rate * gradient #update weights
+                self.listWeights.append(weights)
+                    
+          return self.listWeights  
          
       def predict(self, features):
-          final_scores = np.dot(np.hstack((np.ones((features.shape[0], 1)),
-                                 features)), self.weights)
-          preds = np.round(self.sigmoid(final_scores))
+          final_scores_list = []
+          prediction = []
+
+          #calculate the scores in test set
+          for kind in range(len(self.uniqueTarget)):
+                final_scores = np.dot(np.hstack((np.ones((features.shape[0], 1)),
+                                       features)), self.listWeights[kind])
+                final_scores_list.append(final_scores)
+                
+          #predict the label from scores
+          for set in range (features.shape[0]):
+                predict_dictionary = {}
+                for kind in range(len(self.uniqueTarget)):
+                      predict_dictionary[self.uniqueTarget[kind]] = final_scores_list[kind][set]
+                prediction.append(max(predict_dictionary, key = lambda classLabel: predict_dictionary[classLabel]))
           
-          return preds
+          prediction = np.array(prediction)      
+          return prediction
+          
+if __name__ == "__main__":
+      def playtennis() :
+            client = MongoClient()
+            db=client.newdb
+            collection=db.playtennis.find()
+            df =pd.DataFrame(list(collection))
+            del df['_id']  
+            print (df)
+            target = df['play'].values.astype(str)
+            del df['play']
+            df = pd.get_dummies(df)
+            features = df.iloc[:,:].values
+            print (df)
+            return [features, target]
+      
+      def iris() :
+            client = MongoClient()
+            db=client.newdb
+            collection=db.irisdataset.find()
+            df =pd.DataFrame(list(collection))
+            del df['_id']
+            print (df)
+            features = df.iloc[:,:-1].values.astype(float)
+            target = df.iloc[:,-1].values.astype(str)
+            return [features, target]
+      
+      temp=sys.argv
+      #Load data and Preperation Data            
+      
+      #Training Step
 
-def playtennis() :
-      client = MongoClient()
-      db=client.newdb
-      collection=db.playtennis.find()
-      df =pd.DataFrame(list(collection))
-      del df['_id']  
-      df.set_value(df['play']=='no',['play'],0)
-      df.set_value(df['play']=='yes',['play'],1)
-      target = df['play'].values.astype(int)
-      del df['play']
-      df = pd.get_dummies(df)
-      features = df.iloc[:,:].values
-      return [features, target]
-
-def iris() :
-      client = MongoClient()
-      db=client.newdb
-      collection=db.irisdataset.find()
-      df =pd.DataFrame(list(collection))
-      del df['_id']
-      df.set_value(df['species']=='Iris-setosa',['species'],0)
-      df.set_value(df['species']=='Iris-versicolor',['species'],1)
-      features = df.iloc[:89,:-1].values.astype(float)
-      target = df.iloc[:89,-1].values.astype(int)
-      return [features, target]
-
-#Load data and Preperation Data
-[features, target] = playtennis()
-#[features, target] = iris()
-
-#Training Step
-log_reg = logisticRegression()
-weights = log_reg.trainingMethod(features, target,
-                     num_steps = 50000, learning_rate = 5e-5, add_intercept=True)
-print (weights)
-
-#Testing Step
-print (log_reg.predict(features))
+      dataset = temp[-1]
+      
+      if dataset == "playtennis":
+            [features, target] = playtennis()
+      else:     
+            [features, target] = iris()
+      
+      #Training Step
+      log_reg = LogisticRegression()
+      weights = log_reg.trainingMethod(features, target,
+                           num_steps = 50000, learning_rate = 5e-5, add_intercept=True)
+      print ("Weights:")
+      print (weights)
+      
+      #Testing Step
+      prediction = log_reg.predict(features)
+      print ("\nPrediction :")
+      print (prediction)
+      
+      #error calculation
+      error = 0
+      for i in range (len(prediction)):
+            if target[i] != prediction[i]:
+                  error = error+1
+                  
+      print ("\n Error : %i" %error +"/%i" %len(target)+" = %f" %(error*100/len(target))+"%")
+                  
+                  
