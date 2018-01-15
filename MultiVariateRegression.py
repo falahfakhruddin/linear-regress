@@ -7,6 +7,7 @@ Created on Mon Dec 18 08:56:49 2017
 import numpy as np
 from pymongo import MongoClient
 import pandas as pd
+from Normalization import Normalization
 
 class MultiVariateRegression():
       def trainingMethod(self, features, target, num_steps, learning_rate, add_intercept = False):
