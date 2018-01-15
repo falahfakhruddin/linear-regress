@@ -25,8 +25,8 @@ class LogisticRegression ():
           for kind in range (len(self.uniqueTarget)): #looping for each unique target
                 #set binary value for unique target
                 dfTarget = pd.DataFrame(target)
-                dfTarget.set_value(dfTarget[0]!= uniqueTarget[kind],[0],0)
-                dfTarget.set_value(dfTarget[0]== uniqueTarget[kind],[0],1)
+                dfTarget.set_value(dfTarget[0]!= self.uniqueTarget[kind],[0],0)
+                dfTarget.set_value(dfTarget[0]== self.uniqueTarget[kind],[0],1)
                 numericalTarget = dfTarget.iloc[:,-1].values.astype(int)
                 
                 #initiate weights value
