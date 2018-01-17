@@ -48,10 +48,10 @@ class LogisticRegression ():
                     gradient = np.dot(features.T, output_error_signal) #value of derivative function for each parameter
                     weights += self.learning_rate * gradient #update weights
                 self.listWeights.append(weights)
-                    
+
           return self.listWeights  
          
-      def predict(self, features):
+      def predict(self, features, target):
           final_scores_list = []
           prediction = []
 
@@ -68,8 +68,19 @@ class LogisticRegression ():
                       predict_dictionary[self.uniqueTarget[kind]] = final_scores_list[kind][set]
                 prediction.append(max(predict_dictionary, key = lambda classLabel: predict_dictionary[classLabel]))
           
-          prediction = np.array(prediction)      
-          return prediction
+          prediction = np.array(prediction)
+          print("\nPrediction :")
+          print (prediction)
+
+          #calculate error
+          error = 0
+          for i in range(len(prediction)):
+              if target[i] != prediction[i]:
+                  error = error + 1
+
+          error = float(error*100/len(target))
+
+          return float(error)
           
 if __name__ == "__main__":
       def playtennis() :
@@ -117,14 +128,5 @@ if __name__ == "__main__":
       print (weights)
       
       #Testing Step
-      prediction = log_reg.predict(features)
-      print ("\nPrediction :")
-      print (prediction)
-      
-      #error calculation
-      error = 0
-      for i in range (len(prediction)):
-            if target[i] != prediction[i]:
-                  error = error+1
-                  
-      print ("\n Error : %i" %error +"/%i" %len(target)+" = %f" %(error*100/len(target))+"%")
+      error = log_reg.predict(features, target)
+      print ("\n Error : %i" %error +"%")
