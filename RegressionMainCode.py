@@ -17,7 +17,7 @@ class MultiVariateRegression():
             self.learningRate = learningRate
             self.intercept = addIntercept
             
-      def trainingMethod(self, features, target):
+      def training(self, features, target):
           if self.intercept:
               intercept = np.ones((features.shape[0], 1))
               features = np.hstack((intercept, features))    
