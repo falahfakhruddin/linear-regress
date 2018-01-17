@@ -57,7 +57,7 @@ if __name__ == "__main__":
     #training phase
     step = 5000
     multipleReg = MultiVariateRegression(numSteps = step, learningRate = 1e-7, addIntercept=True)
-    weights, error, iteration = multipleReg.trainingMethod(features, target)
+    weights, error, iteration = multipleReg.training(features, target)
 
     print ("Weights :")
     print (weights)
