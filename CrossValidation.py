@@ -101,27 +101,6 @@ def train(classifier, training_set):
     return classifier.training(feature, target)
 
 
-a = np.array([[1, 2, 3],
-              [2, 3, 4]])
-a[0].shape
-a = np.array([])
-d = line.reshape(1, len(line))
-a = np.append(a, d, axis=0)
-
-for line in a:
-    print(line)
-    print("/n")
-
-import math
-
-
-def assign():
-    k = 4
-    size = math.ceil(len(dataset) / float(k))
-    partitions = [np.zeros(line) for i in range(k)]
-
-    partitions[0].append(line)
-
 """
 features = np.array([[1, 2, 3, 4], [2, 3, 4, 5], [3, 5, 2, 3], [4, 5, 2, 3],
                      [5, 5, 2, 4], [6, 6, 4, 3], [7, 5, 4, 1], [8, 3, 5, 1]])
