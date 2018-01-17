@@ -36,13 +36,25 @@ class MultiVariateRegression():
               
               error.append(mae)
               iteration.append(step)
-          return self.weights, error, iteration
+
+          # plot MAE
+          plt.plot(iteration, error)
+          plt.ylabel("Error")
+          plt.xlabel("Iteration")
+          plt.show()
+
+          return self.weights
               
-      def predict(self, features):
+      def predict(self, features, target):
           final_scores = np.dot(np.hstack((np.ones((features.shape[0], 1)),
                                  features)), self.weights)
-          
-          return final_scores
+          print("\nPredictions :")
+          print(prediction)
+
+          #calculate error
+          error = np.sum(abs(final_scores - target))
+          error = np.sum(error)/len(target)
+          return error
 
 if __name__ == "__main__":
     temp=sys.argv
@@ -57,18 +69,15 @@ if __name__ == "__main__":
     #training phase
     step = 5000
     multipleReg = MultiVariateRegression(numSteps = step, learningRate = 1e-7, addIntercept=True)
-    weights, error, iteration = multipleReg.training(features, target)
+    weights = multipleReg.training(features, target)
 
     print ("Weights :")
     print (weights)
 
-    #plot MAE
-    plt.plot(iteration, error)
-    plt.ylabel("Error")
-    plt.xlabel("Iteration")
-    plt.show()
-
     #testing method
-    prediction = multipleReg.predict(features)
-    print ("\nPredictions :")
-    print (prediction)
+    error = multipleReg.predict(features, target)
+    print ("\nError : %f" %error )
+
+
+b = np.array([[1,2,3],[3,2,1]])
+a = np.array([[1,2,3],[3,2,1]])
