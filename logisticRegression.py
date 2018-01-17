@@ -13,7 +13,7 @@ class LogisticRegression ():
       def sigmoid(self, scores):
           return 1 / (1 + np.exp(-scores))
       
-      def trainingMethod(self, features, target, num_steps=50000, learning_rate=5e-5, add_intercept = True):
+      def training(self, features, target, num_steps=50000, learning_rate=5e-5, add_intercept = True):
           #adding extra features for coefficient parameter  
           if add_intercept:
               intercept = np.ones((features.shape[0], 1))
