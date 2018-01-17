@@ -10,12 +10,17 @@ from pymongo import MongoClient
 import pandas as pd
 
 class LogisticRegression ():
+      def __init__(self, num_steps=50000, learning_rate=5e-5, intercept=True):
+          self.num_steps = num_steps
+          self.learning_rate = learning_rate
+          self.intercept = intercept
+
       def sigmoid(self, scores):
           return 1 / (1 + np.exp(-scores))
       
-      def training(self, features, target, num_steps=50000, learning_rate=5e-5, add_intercept = True):
+      def training(self, features, target):
           #adding extra features for coefficient parameter  
-          if add_intercept:
+          if self.intercept:
               intercept = np.ones((features.shape[0], 1))
               features = np.hstack((intercept, features)) 
               
@@ -33,7 +38,7 @@ class LogisticRegression ():
                 weights = np.zeros(features.shape[1])
                 
                 #gradient descent step
-                for step in range(num_steps):
+                for step in range(self.num_steps):
                     scores = np.dot(features, weights) #calculate prediction value
                     predictions = self.sigmoid(scores) #transform with sigmoid function
             
@@ -41,7 +46,7 @@ class LogisticRegression ():
                     output_error_signal = numericalTarget - predictions
                     
                     gradient = np.dot(features.T, output_error_signal) #value of derivative function for each parameter
-                    weights += learning_rate * gradient #update weights
+                    weights += self.learning_rate * gradient #update weights
                 self.listWeights.append(weights)
                     
           return self.listWeights  
@@ -105,9 +110,9 @@ if __name__ == "__main__":
             [features, target] = iris()
       
       #Training Step
-      log_reg = LogisticRegression()
-      weights = log_reg.trainingMethod(features, target,
-                           num_steps = 50000, learning_rate = 5e-5, add_intercept=True)
+      log_reg = LogisticRegression(num_steps=50000, learning_rate=5e-5)
+      weights = log_reg.training(features, target)
+
       print ("Weights:")
       print (weights)
       
@@ -123,5 +128,3 @@ if __name__ == "__main__":
                   error = error+1
                   
       print ("\n Error : %i" %error +"/%i" %len(target)+" = %f" %(error*100/len(target))+"%")
-                  
-                  
