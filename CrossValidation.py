@@ -122,9 +122,10 @@ def assign():
 
     partitions[0].append(line)
 
-
+"""
 features = np.array([[1, 2, 3, 4], [2, 3, 4, 5], [3, 5, 2, 3], [4, 5, 2, 3],
                      [5, 5, 2, 4], [6, 6, 4, 3], [7, 5, 4, 1], [8, 3, 5, 1]])
 target = np.array(['1', '2', '3', '4', '5', '6', '7', '8'])
 
 training_set = training_set_feature, training_set_target
+"""
