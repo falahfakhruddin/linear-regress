@@ -78,9 +78,9 @@ def kfoldcv(classifier, features, target, k):
         test_set = test_set_feature, test_set_target
 
         # Train and classify model
-        class = classifier
-        trained_classifier = train(classifier, training_set)
-        errors.append(predict(classifier, test_set))
+        model = classifier
+        trained_classifier = train(model, training_set)
+        errors.append(predict(model, test_set))
 
     # Compute statistics
     mean = sum(errors) / k
