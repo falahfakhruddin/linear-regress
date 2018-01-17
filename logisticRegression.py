@@ -67,7 +67,7 @@ class LogisticRegression ():
                 for kind in range(len(self.uniqueTarget)):
                       predict_dictionary[self.uniqueTarget[kind]] = final_scores_list[kind][set]
                 prediction.append(max(predict_dictionary, key = lambda classLabel: predict_dictionary[classLabel]))
-          
+
           prediction = np.array(prediction)
           print("\nPrediction :")
           print (prediction)
