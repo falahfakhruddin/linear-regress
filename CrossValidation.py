@@ -9,6 +9,9 @@ from numpy.random import shuffle
 import numpy as np
 import random
 import math
+import pandas as pd
+from LogisticRegression import LogisticRegression
+from RegressionMainCode import MultiVariateRegression
 
 
 # Split a dataset into a train and test set
@@ -55,12 +58,12 @@ def assign(partition_feature, size, k):
 
 
 def kfoldcv(classifier, features, target, k):
+    target = target.reshape(len(target), 1)
     partition_feature, partition_target = partition(features, target, k)
     errors = list()
 
     # Run the algorithm k times, record error each time
     for i in range(k):
-        i = 0
         training_set_feature = np.empty([1, len(features[0])])
         training_set_target = np.empty([1, len(target[0])])
         for j in range(k):
@@ -71,11 +74,14 @@ def kfoldcv(classifier, features, target, k):
         # flatten training set
         training_set_feature = np.delete(training_set_feature, 0, 0)
         training_set_target = np.delete(training_set_target, 0, 0)
+        training_set_target, =np.array(training_set_target.T)
         training_set = training_set_feature, training_set_target
 
         test_set_feature = partition_feature[i]
         test_set_target = partition_target[i]
+        test_set_target, = np.array(test_set_target.T)
         test_set = test_set_feature, test_set_target
+
 
         # Train and classify model
         algorithm = classifier
@@ -88,12 +94,15 @@ def kfoldcv(classifier, features, target, k):
     standardDeviation = variance ** .5
     confidenceInterval = (mean - 1.96 * standardDeviation, mean + 1.96 * standardDeviation)
 
+    return standardDeviation
+
+"""
     _output(
         "\t\tMean = {0:.2f} \n\t\tVariance = {1:.4f} \n\t\tStandard Devation = {2:.3f} \n\t\t95% Confidence interval: [{3:.2f}, {4:.2f}]" \
             .format(mean, variance, standardDeviation, confidenceInterval[0], confidenceInterval[1]))
 
     return (errors, mean, variance, confidenceInterval, k)
-
+"""
 
 def train(classifier, training_set):
     feature = training_set[0]
@@ -114,3 +123,14 @@ target = np.array(['1', '2', '3', '4', '5', '6', '7', '8'])
 
 training_set = training_set_feature, training_set_target
 """
+
+if __name__ == "__main__":
+    #extract data
+    txtfile = "homeprice.txt"
+    data = pd.read_csv(txtfile)
+    print(data)
+    header = list(data)
+    features = data.iloc[:, :-1].values.astype(float)
+    target = data.iloc[:, -1].values.astype(float)
+
+    stan_deviation = kfoldcv(MultiVariateRegression(numSteps=10000, learningRate=1e-5), features, target, k=4)
