@@ -88,12 +88,6 @@ def kfoldcv(classifier, features, target, k):
         trained_classifier = train(algorithm, training_set)
         errors.append(testing(algorithm, test_set))
 
-    # Compute statistics
-    mean = sum(errors) / k
-    variance = sum([(error - mean) ** 2 for error in errors]) / (k)
-    standardDeviation = variance ** .5
-    confidenceInterval = (mean - 1.96 * standardDeviation, mean + 1.96 * standardDeviation)
-
     return errors
 
 """
