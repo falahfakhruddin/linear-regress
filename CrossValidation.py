@@ -12,7 +12,7 @@ import math
 import pandas as pd
 from LogisticRegression import LogisticRegression
 from RegressionMainCode import MultiVariateRegression
-
+import database_program as db
 
 # Split a dataset into a train and test set
 class CrossValidation():
@@ -94,7 +94,7 @@ def kfoldcv(classifier, features, target, k):
     standardDeviation = variance ** .5
     confidenceInterval = (mean - 1.96 * standardDeviation, mean + 1.96 * standardDeviation)
 
-    return standardDeviation
+    return errors
 
 """
     _output(
@@ -126,11 +126,12 @@ training_set = training_set_feature, training_set_target
 
 if __name__ == "__main__":
     #extract data
-    txtfile = "homeprice.txt"
-    data = pd.read_csv(txtfile)
-    print(data)
-    header = list(data)
-    features = data.iloc[:, :-1].values.astype(float)
-    target = data.iloc[:, -1].values.astype(float)
+    features, target = db.playtennis()
+    k = 4
+    errors = kfoldcv(LogisticRegression(), features, target, k=k)
 
-    stan_deviation = kfoldcv(MultiVariateRegression(numSteps=10000, learningRate=1e-5), features, target, k=4)
+    # Compute statistics
+    mean = sum(errors) / k
+    variance = sum([(error - mean) ** 2 for error in errors]) / (k)
+    standardDeviation = variance ** .5
+    confidenceInterval = (mean - 1.96 * standardDeviation, mean + 1.96 * standardDeviation)
