@@ -12,7 +12,7 @@ import math
 import pandas as pd
 from LogisticRegression import LogisticRegression
 from RegressionMainCode import MultiVariateRegression
-import database_program as db
+import DatabaseConnector as db
 
 # Split a dataset into a train and test set
 class CrossValidation():
