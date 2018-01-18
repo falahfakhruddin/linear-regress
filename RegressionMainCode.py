@@ -45,14 +45,22 @@ class MultiVariateRegression():
 
           return self.weights
               
-      def predict(self, features, target):
-          final_scores = np.dot(np.hstack((np.ones((features.shape[0], 1)),
+      def predict(self, features, weights=None):
+          if weights == None:
+              weights = self.weights
+
+          prediction = np.dot(np.hstack((np.ones((features.shape[0], 1)),
                                  features)), self.weights)
           print("\nPredictions :")
           print(prediction)
+          return prediction
+
+      def testing(self, features, target, weights=None):
+          #getprediction
+          prediction = self.predict(features, weights)
 
           #calculate error
-          error = np.sum(abs(final_scores - target))
+          error = np.sum(abs(prediction - target))
           error = np.sum(error)/len(target)
           return error
 
@@ -75,7 +83,7 @@ if __name__ == "__main__":
     print (weights)
 
     #testing method
-    error = multipleReg.predict(features, target)
+    error = multipleReg.testing(features, target)
     print ("\nError : %f" %error )
 
 
