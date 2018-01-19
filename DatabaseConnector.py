@@ -35,10 +35,31 @@ class DatabaseConnector():
         target = df.iloc[:, -1].values.astype(str)
         return [features, target]
 
-    client = MongoClient()
-    db = client["newdb"]
-    collection = db.sample.find()
-    acol = list(collection)
+    def get_collection(self, datafile, target, type='classification', database='newdb'): #get dataframe
+        client = MongoClient()
+        db = client[database]
+        collection = db[datafile].find()
+        df = pd.DataFrame(list(collection))
+        del df['_id']
+        if type == 'classification':
+            label = df[target].values.astype(str)
+        elif type == 'regression':
+            label = df[target].values.astype(float)
+        del df[target]
+
+        return df, label
+
+    def import_collection(self, jsonfile, collection, database='newdb'): #upload json file into database
+        client = MongoClient()
+        db = client[database]
+        upload = db[collection]
+        result = upload.insert_many(jsonfile).inserted_ids
+
+        return result
+
+
+
+"""
 
 import datetime
 post = {"author": "Mike",
@@ -50,7 +71,6 @@ posts = db.posts
 post_id = posts.insert_one(post).inserted_id
 
 new_posts = [{"author": "Mike",
-
               "text": "Another post!",
               "tags": ["bulk", "insert"],
               "date": datetime.datetime(2009, 11, 12, 11, 14)},
@@ -61,3 +81,10 @@ new_posts = [{"author": "Mike",
 nsample = db.newcol
 result = nsample.insert_many(new_posts).inserted_ids
 
+import json
+from pprint import pprint
+
+data = json.load(open('homeprice.txt'))
+
+pprint(data)
+"""
