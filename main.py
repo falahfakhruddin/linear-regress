@@ -24,7 +24,7 @@ header = bias + header
 #extract feature
 features = np.array(df)
 
-model = MultiVariateRegression()
+model = LogisticRegression()
 weights = model.training(features, target)
 weights.shape
 weight_frame = pd.DataFrame(weights.reshape(1,len(weights)), columns=header)
