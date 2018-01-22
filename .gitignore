@@ -1,2 +1,26 @@
 #filetemporaryVIM
 *.swp
+# python compiled file
+*.pyc
+
+
+# temp editing files
+*.swap
+*.swp
+*.swo
+
+# env dir
+venv
+
+# info
+*.*-info
+
+# build
+build
+
+# distribution files
+dist
+*.egg
+
+# intellij idea project directory
+.idea
