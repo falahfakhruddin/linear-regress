@@ -88,3 +88,6 @@ data = json.load(open('homeprice.txt'))
 
 pprint(data)
 """
+
+db= DatabaseConnector()
+features = db.get_collection("playtennis", "play")
