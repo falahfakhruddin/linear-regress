@@ -20,7 +20,7 @@ class DatabaseConnector():
             target = df[label].values.astype(str)
         elif type == 'regression':
             target = df[label].values.astype(float)
-        del df[target]
+        del df[label]
 
         if dummies =='yes':
             features = pd.get_dummies(df)
@@ -100,3 +100,6 @@ pprint(data)
         target = df.iloc[:, -1].values.astype(str)
         return [features, target]
 """
+
+db = DatabaseConnector()
+df = db.get_collection(datafile="playtennis", label="play", dummies='yes')

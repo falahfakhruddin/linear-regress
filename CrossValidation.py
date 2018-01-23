@@ -122,10 +122,10 @@ training_set = training_set_feature, training_set_target
 if __name__ == "__main__":
     #extract data
     db = DatabaseConnector()
-    df = db.get_collection("playtennis", "play")
+    df = db.get_collection("playtennis", "play", dummies='yes')
+    features = df[0]
     target = df[1]
-    features = pd.get_dummies(df[0])
-    features = features._values
+    header = df[2]
 
     #kfold
     k = 4
