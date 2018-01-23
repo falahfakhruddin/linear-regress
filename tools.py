@@ -17,3 +17,10 @@ def transform_dataframe_json(dataframe):
     json_file = dict_from_str(json)
 
     return json_file
+
+
+def dummies(features):
+    features = pd.DataFrame(features)
+    features = pd.get_dummies(features)
+    features = df.iloc[:, :].values.astype(int)
+    return features
