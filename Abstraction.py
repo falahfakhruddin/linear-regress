@@ -19,3 +19,12 @@ class AbstractML(ABC):
       @abstractmethod
       def testing(self):
             pass
+
+class AbstractPreprocessing(ABC):
+      @abstractmethod
+      def fit(self):
+            pass
+
+      @abstractmethod
+      def transform(self):
+            pass

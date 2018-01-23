@@ -4,12 +4,13 @@ Created on Fri Dec  8 13:28:20 2017
 
 @author: falah.fakhruddin
 """
+from Abstraction import AbstractML
 import sys
 import numpy as np
 from pymongo import MongoClient
 import pandas as pd
 
-class LogisticRegression ():
+class LogisticRegression (AbstractML):
       def __init__(self, num_steps=50000, learning_rate=5e-5, intercept=True):
           self.num_steps = num_steps
           self.learning_rate = learning_rate

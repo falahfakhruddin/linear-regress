@@ -4,10 +4,10 @@ Created on Fri Dec 29 08:53:37 2017
 
 @author: falah.fakhruddin
 """
-import AbstractPreprocessing
+from Abstraction import AbstractPreprocessing
 import numpy as np
 
-class FeatureSelection(Abstraction):
+class FeatureSelection(AbstractPreprocessing):
       def __init__(self, missingValues = "NaN", percentage = 0.5):
             self.list = []
             self.percentage = percentage

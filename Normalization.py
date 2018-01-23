@@ -4,9 +4,10 @@ Created on Fri Dec 15 14:39:41 2017
 
 @author: falah.fakhruddin
 """
+from Abstraction import AbstractPreprocessing
 import numpy as np
 
-class Normalization():
+class Normalization(AbstractPreprocessing):
 
       def fit(self, data):
             self.data_min=np.min(data, axis=0)

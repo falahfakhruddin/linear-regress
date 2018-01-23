@@ -4,14 +4,15 @@ Created on Mon Jan  8 13:41:39 2018
 
 @author: falah.fakhruddin
 """
+from Abstraction import AbstractML
 import sys
+from DatabaseConnector import DatabaseConnector
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-#from MultiVariateRegression import MultiVariateRegression
 
-class MultiVariateRegression():
+class MultiVariateRegression(AbstractML):
       def __init__(self, numSteps = 50000, learningRate = 1e-7, addIntercept = True):
             self.numSteps = numSteps
             self.learningRate = learningRate
@@ -67,12 +68,16 @@ class MultiVariateRegression():
 if __name__ == "__main__":
     temp=sys.argv
     #extract data from txt file into array
-    txtfile = "homeprice.txt"
-    data = pd.read_csv(txtfile)
-    print (data)
-    header = list(data)
-    features = data.iloc[:,:-1].values.astype(float)
-    target = data.iloc[:,-1].values.astype(float)
+    db = DatabaseConnector()
+    list_db = db.get_collection("homeprice", "Price", type="regression")
+    df = list_db[0]
+    target = list_db[1]
+    header = list(df)
+    bias = ['bias']
+    header = bias + header
+
+    # extract feature
+    features = np.array(df)
 
     #training phase
     step = 10000

@@ -6,11 +6,11 @@ Created on Wed Dec 27 10:14:33 2017
 """
 import numpy as np
 import numpy.ma as ma
-from AbstractPreprocessing import Abstraction
+from Abstraction import AbstractPreprocessing
 from scipy import stats            
             
 
-class DataCleaning(Abstraction):
+class DataCleaning(AbstractPreprocessing):
       def __init__ (self, missingValues = "NaN", strategy = "mean", axis = 0):
             self.missingValues = missingValues
             self.strategy = strategy 
