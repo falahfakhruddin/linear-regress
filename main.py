@@ -4,15 +4,15 @@ from RegressionMainCode import MultiVariateRegression
 import numpy as np
 import pandas as pd
 import tools as tl
-
+"""
 db = DatabaseConnector()
 homeprice = pd.read_csv("homeprice.txt")
 json_homperice = tl.transform_dataframe_json(homeprice)
 db.import_collection(json_homperice, "homeprice")
-
+"""
 
 db = DatabaseConnector()
-list_db = db.get_collection("playtennis", "play")
+list_db = db.get_collection("homeprice", "Price", type="regression")
 df =list_db[0]
 target = list_db[1]
 header = list(df)
@@ -22,7 +22,7 @@ header = bias + header
 #extract feature
 features = np.array(df)
 
-model = LogisticRegression()
+model = MultiVariateRegression()
 weights = model.training(features, target)
 
 
