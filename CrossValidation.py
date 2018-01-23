@@ -12,7 +12,8 @@ import math
 import pandas as pd
 from LogisticRegression import LogisticRegression
 from RegressionMainCode import MultiVariateRegression
-import DatabaseConnector as db
+from DatabaseConnector import DatabaseConnector
+import tools as tl
 
 # Split a dataset into a train and test set
 class CrossValidation():
@@ -120,7 +121,13 @@ training_set = training_set_feature, training_set_target
 
 if __name__ == "__main__":
     #extract data
-    features, target = db.playtennis()
+    db = DatabaseConnector()
+    df = db.get_collection("playtennis", "play")
+    target = df[1]
+    features = pd.get_dummies(df[0])
+    features = features._values
+
+    #kfold
     k = 4
     errors = kfoldcv(LogisticRegression(), features, target, k=k)
 
@@ -129,3 +136,4 @@ if __name__ == "__main__":
     variance = sum([(error - mean) ** 2 for error in errors]) / (k)
     standardDeviation = variance ** .5
     confidenceInterval = (mean - 1.96 * standardDeviation, mean + 1.96 * standardDeviation)
+    print (mean)
