@@ -35,19 +35,29 @@ class DatabaseConnector():
         target = df.iloc[:, -1].values.astype(str)
         return [features, target]
 
-    def get_collection(self, datafile, target, type='classification', database='newdb'): #get dataframe
+    def get_collection(self, datafile, label, type='classification', database='newdb', dummies='no'): #get dataframe
         client = MongoClient()
         db = client[database]
         collection = db[datafile].find()
         df = pd.DataFrame(list(collection))
         del df['_id']
+
         if type == 'classification':
-            label = df[target].values.astype(str)
+            target = df[label].values.astype(str)
         elif type == 'regression':
-            label = df[target].values.astype(float)
+            target = df[label].values.astype(float)
         del df[target]
 
-        return df, label
+        if dummies =='yes':
+            features = pd.get_dummies(df)
+            header = list(features)
+            features = features.values
+
+        else:
+            header = list(df)
+            features = df.iloc[:, :].values
+
+        return features, target, header,
 
     def import_collection(self, jsonfile, collection, database='newdb'): #upload json file into database
         client = MongoClient()
@@ -88,6 +98,3 @@ data = json.load(open('homeprice.txt'))
 
 pprint(data)
 """
-
-db= DatabaseConnector()
-features = db.get_collection("playtennis", "play")
