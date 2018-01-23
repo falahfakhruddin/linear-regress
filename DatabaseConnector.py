@@ -36,7 +36,7 @@ class DatabaseConnector():
         return [features, target]
 
     def get_collection(self, datafile, target, type='classification', database='newdb'): #get dataframe
-        client = MongoClient('192.168.1.100:27')
+        client = MongoClient()
         db = client[database]
         collection = db[datafile].find()
         df = pd.DataFrame(list(collection))
