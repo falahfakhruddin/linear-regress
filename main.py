@@ -17,8 +17,6 @@ list_db = db.get_collection("homeprice", "Price", type="regression")
 df = list_db[0]
 target = list_db[1]
 header = list(df)
-bias = ['bias']
-header = bias + header
 
 # extract feature
 features = np.array(df)

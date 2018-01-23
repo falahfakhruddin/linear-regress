@@ -100,6 +100,3 @@ pprint(data)
         target = df.iloc[:, -1].values.astype(str)
         return [features, target]
 """
-
-db = DatabaseConnector()
-df = db.get_collection(datafile="playtennis", label="play", dummies='yes')
