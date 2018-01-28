@@ -7,6 +7,7 @@ Created on Tue Dec  5 15:14:53 2017
 
 from pymongo import MongoClient
 import pandas as pd
+import urllib
 
 class DatabaseConnector():
     def playtennis():
@@ -35,8 +36,14 @@ class DatabaseConnector():
         target = df.iloc[:, -1].values.astype(str)
         return [features, target]
 
-    def get_collection(self, datafile, target, type='classification', database='newdb'): #get dataframe
-        client = MongoClient()
+    def get_collection(self, datafile, target, type='classification', database='mydb', cloud=False): #get dataframe
+
+        if cloud == True:
+            url_lib = 'mongodb+srv://fkhudin:'+urllib.parse.quote('@22ad8301')+'@machine-learning-study-n2anh.mongodb.net/mydb'
+        elif cloud == False:
+            url_lib = None
+
+        client = MongoClient(url_lib)
         db = client[database]
         collection = db[datafile].find()
         df = pd.DataFrame(list(collection))
@@ -86,8 +93,20 @@ from pprint import pprint
 
 data = json.load(open('homeprice.txt'))
 
-pprint(data)
+pprint(data)s
 """
+"""
+def transfer_collection_local_to_atlas(datafile):
+    client = MongoClient()
+    db = client['newdb']
+    collection = db[datafile].find()
 
-db= DatabaseConnector()
-features = db.get_collection("playtennis", "play")
+    url_lib = 'mongodb+srv://fkhudin:'+urllib.parse.quote('@22ad8301')+'@machine-learning-study-n2anh.mongodb.net/mydb'
+    client = MongoClient(url_lib)
+    db = client['mydb']
+    db[datafile].insert_many(list(collection))
+    collect = db[datafile].find()
+    pprint.pprint(list(collect))
+
+transfer_collection_local_to_atlas('homeprice')
+"""

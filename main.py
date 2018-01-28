@@ -12,7 +12,7 @@ db.import_collection(json_homperice, "homeprice")
 
 
 db = DatabaseConnector()
-list_db = db.get_collection("playtennis", "play")
+list_db = db.get_collection("irisdataset", "species", database='mydb', cloud=True)
 df =list_db[0]
 target = list_db[1]
 header = list(df)
