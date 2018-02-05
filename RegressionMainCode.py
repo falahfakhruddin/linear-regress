@@ -19,6 +19,8 @@ class MultiVariateRegression(AbstractML):
             self.intercept = addIntercept
 
       def training(self, features, target):
+          listWeights = list()
+
           if self.intercept:
               intercept = np.ones((features.shape[0], 1))
               features = np.hstack((intercept, features))
@@ -44,11 +46,14 @@ class MultiVariateRegression(AbstractML):
           plt.xlabel("Iteration")
           plt.show()
 
-          return self.weights
+          listWeights.append(self.weights)
 
-      def predict(self, features, weights=None):
-          if weights == None:
-              weights = self.weights
+          return listWeights
+
+      def predict(self, features, listWeights=None):
+          if listWeights != None:
+              newWeights = listWeights[0]
+              self.weights = newWeights
 
           prediction = np.dot(np.hstack((np.ones((features.shape[0], 1)),
                                  features)), self.weights)
@@ -56,9 +61,9 @@ class MultiVariateRegression(AbstractML):
           print(prediction)
           return prediction
 
-      def testing(self, features, target, weights=None):
+      def testing(self, features, target, listWeights=None):
           #getprediction
-          prediction = self.predict(features, weights)
+          prediction = self.predict(features, listWeights)
 
           #calculate error
           error = np.sum(abs(prediction - target))

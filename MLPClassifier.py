@@ -37,6 +37,8 @@ if __name__ == "__main__":
     model2 = nn
     print(model2.predict(features))
 
+    list_model = ["irisdataset", SklearnNeuralNet, nn]
+
 """
 json_attr = json.dumps(attr)
 

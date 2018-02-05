@@ -11,7 +11,7 @@ from scipy import stats
             
 
 class DataCleaning(AbstractPreprocessing):
-      def __init__ (self, missingValues = "NaN", strategy = "mean", axis = 0):
+      def __init__ (self, missingValues = "NaN", strategy = "mode", axis = 0):
             self.missingValues = missingValues
             self.strategy = strategy 
             self.axis = axis
