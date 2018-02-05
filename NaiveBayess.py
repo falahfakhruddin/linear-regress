@@ -10,6 +10,7 @@ class NaiveBayess(AbstractML):
         self.labelCounts = collections.defaultdict(lambda: 0)
 
     def training(self, features, target):
+        listWeights = list()
         for counter in range(0, len(target)):  # label count
             self.labelCounts[target[counter]] += 1  # udpate count of the label
             self.weightDict[target[counter]] = {}  # fv[-1] == target name
@@ -31,7 +32,9 @@ class NaiveBayess(AbstractML):
                 self.weightDict[target[target_count]][self.header[counter]][fv[counter]] += temp
             target_count += 1
 
-        return self.weightDict
+
+        listWeights.append(self.weightDict)
+        return listWeights
 
 
     def predict(self, features, weightDict=None):
@@ -57,11 +60,11 @@ class NaiveBayess(AbstractML):
 
 
     def testing(self, features, target, weights=None):
-        if weights == None:
-            weights = self.weightDict
+        if weights != None:
+            self.weightDict = weights[0]
 
         # get prediction
-        prediction = self.predict(features, weights)
+        prediction = self.predict(features, self.weightDict)
 
         # calculate error
         error = 0

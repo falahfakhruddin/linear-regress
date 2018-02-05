@@ -8,12 +8,15 @@ class SklearnNeuralNet(AbstractML):
         self.mlp = MLPClassifier(hidden_layer_sizes=size, solver=solver, learning_rate_init=learning_rate, max_iter=max_iter)
 
     def training(self, features, target):
+        listWeights = list()
         self.mlp.fit(features, target)
-        return self.mlp
+        listWeights.append(self.mlp)
+        return listWeights
 
-    def predict(self, features, model=None):
+    def predict(self, features, listWeights=None):
         if model != None:
-            self.mlp = model
+            weights = listWeights[0]
+            self.mlp = weights
         prediction = (self.mlp.predict(features))
         prediction = prediction.tolist()
         return prediction
