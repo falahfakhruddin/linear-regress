@@ -65,16 +65,16 @@ if __name__ == "__main__":
     training_step(dataset, target, method, algorithm, preprocessing)
 
 
-"""
+
     prediction = model.predict(features, listWeights=weights)
     testing = model.testing(features, target, weights=weights)
-"""
 
-    """
+
+    
     db = DatabaseConnector()
-    homeprice = pd.read_csv("homeprice.txt")
+    homeprice = pd.read_csv("rawplaytennis.csv")
     json_homperice = tl.transform_dataframe_json(homeprice)
-    db.import_collection(json_homperice, "homeprice")
+    db.export_collection(homeprice, "homeprice", database="datapool")
     """
 
 

@@ -13,8 +13,8 @@ def dict_from_str(dict_str):
 
 
 def transform_dataframe_json(dataframe):
-    json = pd.DataFrame.to_json(dataframe, orient='records')
-    json_file = dict_from_str(json)
+    json_df = json.loads(df.T.to_json()).values()
+    json_file = dict_from_str(json_df)
 
     return json_file
 
@@ -24,3 +24,4 @@ def dummies(features):
     features = pd.get_dummies(features)
     features = df.iloc[:, :].values.astype(int)
     return features
+
