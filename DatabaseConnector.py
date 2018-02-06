@@ -49,9 +49,6 @@ class SaveModel(Document):
     model = ListField(max_length=50, required=True)
     create = DateTimeField(default=datetime.datetime.now)
 
-    connect(db="modeldb")
-    savedb = SaveModel(dataset=dataset, algorithm=str(algorithm), preprocessing=preprocessing, model=listWeights)
-    savedb.save()
 """        
 logout = {
     "topic" : ,
