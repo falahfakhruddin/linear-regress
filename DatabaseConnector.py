@@ -136,3 +136,10 @@ if __name__ == "__main__":
 # export_file = {"Model": binary}
 # binary_list = list()
 # binary_list.append(binary)
+
+# client = MongoClient()
+# db = client['rawdb']
+# collection = db['playtennis'].find()
+# df = pd.DataFrame(list(collection))
+# del df['_id']
+

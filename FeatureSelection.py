@@ -45,3 +45,9 @@ if __name__ == "__main__":
 
       Z = np. array([1,2,3,4,5,6,7,8])
       ZT = Z.reshape(len(Z),1)
+
+"""
+#dropping missing value
+threshold=int((0.5 * df.shape[1]) + 0.5) # fit
+newdf=df.dropna(thresh=threshold) # transform
+"""

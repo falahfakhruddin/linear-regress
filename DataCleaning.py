@@ -81,20 +81,16 @@ if __name__ == "__main__":
       dc.fit(ab)
       ab = dc.transform(ab)
 
-      from scipy.stats import mode
-      mode(maskedX)
-      newMosfFrequent = np.append(mostFrequent, [1])
+"""
+#fill missing value
+from random import randint
+#fit
+mode_values = dict()
+for head in list(newdf):
+    mode = newdf[head].mode()
+    mode2 = mode[randint(0,len(mode)-1)]
+    mode_values[head] = mode2 
 
-      from itertools import groupby as g
-
-
-      def most_common_oneliner(L):
-          return max(g(sorted(L)) , key=lambda x, v: (len(list(v)), -L.index(x)))[0]
-
-      z = most_common_oneliner(df)
-
-
-      def most_common(lst):
-          return max(set(lst) , key=lst.count)
-      df2 = df.tolist()
-      result = most_common(df2)
+#trasform
+newnewdf = newdf.fillna(value=mode_values)
+"""
