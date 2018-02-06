@@ -40,21 +40,18 @@ class DatabaseConnector():
         client = MongoClient()
         db = client[database]
         upload = db[collection]
-        if type(jsonfile) == list:
-            return upload.insert_many(jsonfile).inserted_ids
-        elif type(jsonfile) == dict:
-            return upload.insert_one(jsonfile).inserted_id
-
+        return upload.insert_many(jsonfile).inserted_ids
 
 class SaveModel(Document):
-    dataset = StringField(max_length=50, required=True)
-    algorithm = StringField(max_length=50, required=True)
-    preprocessing = ListField(max_length=10, required=True)
-    model = ListField(max_length=10, required=True)
+    dataset = StringField(max_length=100, required=True)
+    algorithm = StringField(max_length=100, required=True)
+    preprocessing = ListField(max_length=50, required=True)
+    model = ListField(max_length=50, required=True)
     create = DateTimeField(default=datetime.datetime.now)
-    email = StringField(required=True)
-    first_name = StringField(max_length=50)
 
+    connect(db="modeldb")
+    savedb = SaveModel(dataset=dataset, algorithm=str(algorithm), preprocessing=preprocessing, model=listWeights)
+    savedb.save()
 """        
 logout = {
     "topic" : ,

@@ -6,31 +6,37 @@ import tools as tl
 from LogisticRegression import LogisticRegression
 from RegressionMainCode import MultiVariateRegression
 from MLPClassifier import MLPClassifier
-from NaiveBayess import NaiveBayess
+#from NaiveBayess import NaiveBayess
 from DataCleaning import DataCleaning
 from Normalization import Normalization
 from FeatureSelection import FeatureSelection
 
-def preprocessing_step(dataset, method, preprocessing):
+def preprocessing_step(dataset, method, label, preprocessing):
     #get db
     db = DatabaseConnector()
-    list_db = db.get_collection(dataset, type=method, database='rawdb')
+    list_db = db.get_collection(dataset, label=label, type=method, database='rawdb')
     df = list_db[0]
+    target = list_db[1]
     features = np.array(df)
     header = list_db[2]
+    header = header + [label]
+
+    #join features with target
+    target = target.reshape(len(target), 1)
+    new_dataset = np.append(features, target, axis=1)
 
     #preprocessing step
     list_preprocessing = preprocessing
     for item in list_preprocessing:
-        item.fit(features)
-        features = item.transform(features)
+        item.fit(new_dataset)
+        new_dataset = item.transform(new_dataset)
 
     #save db
-    features_frame = pd.DataFrame(features, columns=header)
-    json_features = tl.transform_dataframe_json(features_frame)
+    dataset_frame = pd.DataFrame(new_dataset, columns=header)
+    json_features = tl.transform_dataframe_json(dataset_frame)
     new_collection = "clean_"+str(dataset)
     db = DatabaseConnector()
-    db.export_collection(json_features, new_collection, database='cleandb')
+    result = db.export_collection(json_features, new_collection, database='cleandb')
 
 def training_step(dataset, target, method, algorithm, preprocessing):
     # get db
@@ -38,6 +44,7 @@ def training_step(dataset, target, method, algorithm, preprocessing):
     list_db = db.get_collection(dataset, target, type=method, database='cleandb')
     df = list_db[0]
     features = np.array(df)
+    target = list_db[1]
     header = list_db[2]
 
     #training
@@ -45,23 +52,25 @@ def training_step(dataset, target, method, algorithm, preprocessing):
     listWeights = model.training(features, target)
 
     #savedb
-    connect(db="model")
-    SaveModel(dataset=dataset, algorithm=algorithm, preprocessing=preprocessing, model=listWeights)
-
+    connect(db="modeldb")
+    savedb = SaveModel(dataset=dataset, algorithm=str(algorithm), preprocessing=preprocessing, model=listWeights)
+    savedb.save()
     return listWeights
 
 
 if __name__ == "__main__":
     #preprocessing
     dataset = "irisdataset"
-    preprocessing = [FeatureSelection(), DataCleaning()]
-    preprocessing_step(dataset, preprocessing)
+    method = "classification"
+    label = "species"
+    preprocessing = [FeatureSelection(missingValues='nan'), DataCleaning(missingValues='nan')]
+    preprocessing_step(dataset, method, label, preprocessing)
 
     # training
-    dataset = "clean_irisdataset"
-    target = "species"
-    method = "classification"
-    algorithm = LogisticRegression()
+    dataset = "clean_homeprice"
+    target = "Price"
+    method = "regression"
+    algorithm = MultiVariateRegression()
     training_step(dataset, target, method, algorithm, preprocessing)
 
 
@@ -75,9 +84,12 @@ if __name__ == "__main__":
     homeprice = pd.read_csv("rawplaytennis.csv")
     json_homperice = tl.transform_dataframe_json(homeprice)
     db.export_collection(homeprice, "homeprice", database="datapool")
-    """
 
-
+    db = DatabaseConnector()
+    list_db = db.get_collection('playtennis', label='play', database='rawdb')
+    df = list_db[0]
+    print (df[0][0])
+    type(df[0][0])
 
 
 

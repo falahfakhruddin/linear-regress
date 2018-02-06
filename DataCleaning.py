@@ -24,6 +24,7 @@ class DataCleaning(AbstractPreprocessing):
               return X == valueMask
         
       def fit (self, X):
+
             #check parameter
             allowedStrategy = ["mean", "median", "mode"]
             if self.strategy not in allowedStrategy:
@@ -35,26 +36,30 @@ class DataCleaning(AbstractPreprocessing):
                              " got axis={0}".format(self.axis))
 
             
-            mask = self.getMask(X, self.missingValues)           
+            mask = self.getMask(X, self.missingValues)
             maskedX = ma.masked_array(X, mask=mask)
                   
             if self.strategy == "mean":
                   meanMasked = np.ma.mean(maskedX, axis=self.axis)
                   self.mean = np.ma.getdata(meanMasked)
+                  #self.mean = np.append(self.mean, [1])
                   return self.mean
                         
             elif self.strategy == "median":
                    medianMasked = np.ma.median(maskedX, axis=self.axis)
                    self.median = np.ma.getdata(medianMasked)
+                   #self.median = np.append(self.median, [1])
                    return self.median
                       
             elif self.strategy == "mode":
+
                    mode = stats.mode(X)
                    self.mostFrequent = mode[0][0]
+                   #self.mostFrequent = np.append(self.mostFrequent, [1])
                    return self.mostFrequent  
                   
       def transform (self, X):
-            mask = self.getMask(X, self.missingValues)           
+            mask = self.getMask(X, self.missingValues)
             maskedX = ma.masked_array(X, mask=mask)
             if self.strategy == "mean":
                 filledX = maskedX.filled(self.mean)
@@ -70,6 +75,26 @@ class DataCleaning(AbstractPreprocessing):
 if __name__ == "__main__":
       a = np.array([[np.NaN, 2, 3, 4], [0, 3, np.NaN, 2],[1,np.NaN,3,1], [np.NaN,4,3,5],
                     [2,3,2,np.NaN],[3,np.NaN,4,2],[2,3,4,2],[1,2,4,np.NaN]])
-      dc=DataCleaning(strategy="mode")
-      dc.fit(a)
-      a = dc.transform(a)
+      b = np.array([[1],[2],[3],[4],[5], [6], [7], [8]])
+      ab = np.append(a, b, axis=1)
+      dc=DataCleaning(strategy="median")
+      dc.fit(ab)
+      ab = dc.transform(ab)
+
+      from scipy.stats import mode
+      mode(maskedX)
+      newMosfFrequent = np.append(mostFrequent, [1])
+
+      from itertools import groupby as g
+
+
+      def most_common_oneliner(L):
+          return max(g(sorted(L)) , key=lambda x, v: (len(list(v)), -L.index(x)))[0]
+
+      z = most_common_oneliner(df)
+
+
+      def most_common(lst):
+          return max(set(lst) , key=lst.count)
+      df2 = df.tolist()
+      result = most_common(df2)

@@ -36,6 +36,12 @@ class FeatureSelection(AbstractPreprocessing):
 if __name__ == "__main__":
       X = np.array([[np.NaN, np.NaN, 3, 4], [0, 3, np.NaN, 2],[1,np.NaN,3,1], [np.NaN,4,3,5],
               [2,3,2,np.NaN],[3,np.NaN,4,2],[2,3,4,2],[1,np.NaN,4,np.NaN]])
+      Y = np.array([["satu"],["dua"],["tiga"],["empat"],["lima"], ["enam"], ["tujuh"], ["delapan"]])
+      XY = np.append(X, Y, axis=1)
       fs = FeatureSelection()
-      fs.fit(X)
-      X=fs.transform(X)
+      fs.fit(XY)
+      XY=fs.transform(XY)
+
+
+      Z = np. array([1,2,3,4,5,6,7,8])
+      ZT = Z.reshape(len(Z),1)
