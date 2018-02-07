@@ -21,8 +21,6 @@ class LogisticRegression (AbstractML):
 
       def training(self, features, target):
           #adding extra features for coefficient parameter
-          listModel = list()
-
           if self.intercept:
               intercept = np.ones((features.shape[0], 1))
               features = np.hstack((intercept, features))
@@ -52,13 +50,11 @@ class LogisticRegression (AbstractML):
                     weights += self.learning_rate * gradient #update weights
                 self.listWeights.append(weights)
 
-          listModel.append(self.listWeights)
-          return listModel
+          return self.listWeights
 
       def predict(self, features, weights=None):
           if weights != None:
-              newWeights = weights[0]
-              self.listWeights = newWeights
+              self.listWeights = weights
 
           final_scores_list = []
           prediction = []
