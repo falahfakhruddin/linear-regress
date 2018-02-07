@@ -1,6 +1,7 @@
 from sklearn.neural_network import MLPClassifier
 from Abstraction import AbstractML
 from DatabaseConnector import DatabaseConnector
+import pickle
 
 
 class SklearnNeuralNet(AbstractML):
@@ -10,12 +11,14 @@ class SklearnNeuralNet(AbstractML):
     def training(self, features, target):
         listWeights = list()
         self.mlp.fit(features, target)
-        listWeights.append(self.mlp)
+        binary_mlp = pickle.dumps(self.mlp)
+        listWeights.append(binary_mlp)
         return listWeights
 
     def predict(self, features, listWeights=None):
         if model != None:
-            weights = listWeights[0]
+            binary_mlp = listWeights[0]
+            weights = pickle.loads(binary_mlp)
             self.mlp = weights
         prediction = (self.mlp.predict(features))
         prediction = prediction.tolist()
