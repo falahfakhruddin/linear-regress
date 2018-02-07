@@ -1,4 +1,5 @@
 import pandas as pd
+import json
 
 
 def dict_from_str(dict_str):
@@ -13,14 +14,13 @@ def dict_from_str(dict_str):
 
 
 def transform_dataframe_json(dataframe):
-    json = pd.DataFrame.to_json(dataframe, orient='records')
-    json_file = dict_from_str(json)
-
+    json_file = json.loads(dataframe.T.to_json()).values()
     return json_file
 
 
 def dummies(features):
     features = pd.DataFrame(features)
     features = pd.get_dummies(features)
-    features = df.iloc[:, :].values.astype(int)
+    features = features.iloc[:, :].values.astype(int)
     return features
+

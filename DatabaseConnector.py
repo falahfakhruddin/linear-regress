@@ -7,87 +7,132 @@ Created on Tue Dec  5 15:14:53 2017
 
 from pymongo import MongoClient
 import pandas as pd
+import datetime
+from mongoengine import *
+
 
 class DatabaseConnector():
-    def playtennis():
-        client = MongoClient()
-        db = client.newdb
-        collection = db.playtennis.find()
-        df = pd.DataFrame(list(collection))
-        del df['_id']
-        print(df)
-        target = df['play'].values.astype(str)
-        del df['play']
-        df = pd.get_dummies(df)
-        features = df.iloc[:, :].values
-        print(df)
-        return [features, target]
-
-
-    def iris():
-        client = MongoClient()
-        db = client.newdb
-        collection = db.irisdataset.find()
-        df = pd.DataFrame(list(collection))
-        del df['_id']
-        print(df)
-        features = df.iloc[:, :-1].values.astype(float)
-        target = df.iloc[:, -1].values.astype(str)
-        return [features, target]
-
-    def get_collection(self, datafile, target, type='classification', database='newdb'): #get dataframe
+    def get_collection(self, datafile, label, type='classification', database='newdb', dummies='no'):  # get dataframe
         client = MongoClient()
         db = client[database]
         collection = db[datafile].find()
         df = pd.DataFrame(list(collection))
         del df['_id']
+
         if type == 'classification':
-            label = df[target].values.astype(str)
+            target = df[label].values.astype(str)
         elif type == 'regression':
-            label = df[target].values.astype(float)
-        del df[target]
+            target = df[label].values.astype(float)
+        del df[label]
 
-        return df, label
+        if dummies == 'yes':
+            features = pd.get_dummies(df)
+            header = list(features)
+            features = features.values
 
-    def import_collection(self, jsonfile, collection, database='newdb'): #upload json file into database
+        else:
+            header = list(df)
+            features = df.iloc[:, :].values
+
+        return features, target, header,
+
+    def export_collection(self, jsonfile, collection, database='newdb'):  # upload json file into database
         client = MongoClient()
         db = client[database]
         upload = db[collection]
-        result = upload.insert_many(jsonfile).inserted_ids
+        return upload.insert_many(jsonfile).inserted_ids
 
-        return result
+class SaveModel(Document):
+    dataset = StringField(max_length=100, required=True)
+    algorithm = StringField(max_length=100, required=True)
+    preprocessing = ListField(max_length=50, required=True)
+    model = ListField(max_length=50, required=True)
+    create = DateTimeField(default=datetime.datetime.now)
 
-
-
+"""        
+logout = {
+    "topic" : ,
+    "mapper" : {
+        "-$type" : "&$logout",
+        "-$api_key" : "#SIFTSCIENCE.apikey",
+        "-$user_id" : "$.result.result.username",
+    },
+    "is_added" : False,
+    "time_stamp" : datetime.datetime.utcnow(),
+    "is_active" : False
+}
 """
 
-import datetime
-post = {"author": "Mike",
-      "text": "My first blog post!",
-      "tags": ["mongodb", "python", "pymongo"],
-      "date": datetime.datetime.utcnow()}
+class User(EmbeddedDocument):
+    last_name = StringField(max_length=50)
 
-posts = db.posts
-post_id = posts.insert_one(post).inserted_id
+class Poster(Document):
+    title = StringField(max_length=120, required=True)
+    author = EmbeddedDocumentField(User)
+    tags = ListField(StringField(max_length=30))
+    meta = {'allow_inheritance': True}
 
-new_posts = [{"author": "Mike",
-              "text": "Another post!",
-              "tags": ["bulk", "insert"],
-              "date": datetime.datetime(2009, 11, 12, 11, 14)},
-             {"author": "Eliot",
-              "title": "MongoDB is fun",
-              "text": "and pretty easy too!",
-              "date": datetime.datetime(2009, 11, 10, 10, 45)}]
-nsample = db.newcol
-result = nsample.insert_many(new_posts).inserted_ids
+class TextPoster(Poster):
+    content = StringField()
 
-import json
-from pprint import pprint
+class ImagePoster(Poster):
+    image_path = StringField()
 
-data = json.load(open('homeprice.txt'))
+class LinkPoster(Poster):
+    link_url = StringField()
 
-pprint(data)
-"""
+if __name__ == "__main__":
+    ross = User(email='jm@example.com')
+    ross.first_name = 'jose'
+    ross.last_name = 'mourinho'
+    ross.save()
 
-db= DatabaseConnector()
-features = db.get_collection("playtennis", "play")
+    john = User(email='john@example.com')
+    john.first_name = 'John'
+    john.last_name = 'Lawley'
+    john.save()
+
+    query = Q(tags='mongodb')
+    query_result = query.to_query(Poster)
+    print(query_result)
+
+    num_posts = Poster.objects(tags='mongodb')
+    print(num_posts)
+
+    post1 = TextPoster(title='MongoEngine very weird', author=john)
+    post1.content = 'Took a look at MongoEngine today.'
+    post1.tags = ['mongodb', 'mongoal', 'machine-learning']
+    post1.save()
+
+    # extract value from
+    temp = Poster.objects(author__first_name="John")
+    for data in temp:
+        print(data.author.email)
+
+    post2 = LinkPoster(title='MongoEngine Documentation', author=ross)
+    post2.link_url = 'http://docs.mongoengine.com/'
+    post2.tags = ['mongoengine']
+    post2.save()
+
+    for piss in Poster.objects:
+        print(piss.author)
+
+    for post in Poster.objects:
+        print(post.title)
+        print('=' * len(post.title))
+
+        if isinstance(post, TextPoster):
+            print(post.content)
+
+        if isinstance(post, LinkPoster):
+            print('Link: {}'.format(post.link_url))
+
+    post = Poster.objects(tags='mongodb')
+    print(post.title)
+
+# import pickle
+#
+# binary = pickle.dumps(nn)
+# export_file = {"Model": binary}
+# binary_list = list()
+# binary_list.append(binary)
