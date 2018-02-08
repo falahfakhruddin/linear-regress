@@ -15,6 +15,7 @@ from RegressionMainCode import MultiVariateRegression
 from DatabaseConnector import DatabaseConnector
 from NaiveBayess import NaiveBayess
 from MLPClassifier import SklearnNeuralNet
+import tools as tl
 
 def partition(features, target, k):
     size = math.ceil(len(features) / float(k))
@@ -92,14 +93,15 @@ if __name__ == "__main__":
 
     #extract data
     db = DatabaseConnector()
-    df = db.get_collection("irisdataset", "species")
-    features = df[0]
-    target = df[1]
-    header = df[2]
+    df = db.get_collection("homeprice")
+    list_df = tl.dataframe_extraction(df,label='Price', type='regression')
+    features = list_df[0]
+    target = list_df[1]
+    header = list_df[2]
 
     #kfold
     k = 4
-    errors = kfoldcv(LogisticRegression(), features, target, k=k)
+    errors = kfoldcv(MultiVariateRegression(), features, target, k=k)
 
     # Compute statistics
     mean = sum(errors) / k

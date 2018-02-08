@@ -12,29 +12,14 @@ from mongoengine import *
 
 
 class DatabaseConnector():
-    def get_collection(self, datafile, label, type='classification', database='newdb', dummies='no'):  # get dataframe
+    def get_collection(self, datafile, database='newdb'):  # get dataframe
         client = MongoClient()
         db = client[database]
         collection = db[datafile].find()
         df = pd.DataFrame(list(collection))
         del df['_id']
 
-        if type == 'classification':
-            target = df[label].values.astype(str)
-        elif type == 'regression':
-            target = df[label].values.astype(float)
-        del df[label]
-
-        if dummies == 'yes':
-            features = pd.get_dummies(df)
-            header = list(features)
-            features = features.values
-
-        else:
-            header = list(df)
-            features = df.iloc[:, :].values
-
-        return features, target, header,
+        return df
 
     def export_collection(self, jsonfile, collection, database='newdb'):  # upload json file into database
         client = MongoClient()
@@ -45,7 +30,7 @@ class DatabaseConnector():
 class SaveModel(Document):
     dataset = StringField(max_length=100, required=True)
     algorithm = StringField(max_length=100, required=True)
-    preprocessing = ListField(max_length=50, required=True)
+    preprocessing = ListField(BinaryField(), max_length=50, required=True)
     model = ListField(max_length=50, required=True)
     create = DateTimeField(default=datetime.datetime.now)
 
@@ -105,9 +90,12 @@ if __name__ == "__main__":
     post1.save()
 
     # extract value from
-    temp = Poster.objects(author__first_name="John")
+    connect('modeldb')
+    temp = SaveModel.objects(dataset="clean_irisdataset")
     for data in temp:
-        print(data.author.email)
+        y = (data.model)
+
+
 
     post2 = LinkPoster(title='MongoEngine Documentation', author=ross)
     post2.link_url = 'http://docs.mongoengine.com/'

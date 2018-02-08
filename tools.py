@@ -24,3 +24,21 @@ def dummies(features):
     features = features.iloc[:, :].values.astype(int)
     return features
 
+def dataframe_extraction(df, label, type='classification', dummies='no' ):
+    if type == 'classification':
+        target = df[label].values.astype(str)
+    elif type == 'regression':
+        target = df[label].values.astype(float)
+    del df[label]
+
+    if dummies == 'yes':
+        features = pd.get_dummies(df)
+        header = list(features)
+        features = features.values
+
+    else:
+        header = list(df)
+        features = df.iloc[: , :].values
+
+    return features, target, header
+
