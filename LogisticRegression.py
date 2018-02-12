@@ -7,8 +7,9 @@ Created on Fri Dec  8 13:28:20 2017
 from Abstraction import AbstractML
 import sys
 import numpy as np
-from pymongo import MongoClient
 import pandas as pd
+import tools as tl
+from DatabaseConnector import *
 
 class LogisticRegression (AbstractML):
       def __init__(self, num_steps=50000, learning_rate=5e-5, intercept=True):
@@ -19,7 +20,15 @@ class LogisticRegression (AbstractML):
       def sigmoid(self, scores):
           return 1 / (1 + np.exp(-scores))
 
-      def training(self, features, target):
+      def training(self, features=None, target=None, df=None, label=None, type=None, dummies=None):
+          #extracting value of dataframe
+          if df is not None:
+              list_df = tl.dataframe_extraction(df=df, label=label, type=type, dummies=dummies)
+              features = list_df[0]
+              target = list_df[1]
+              self.header = list_df[2]
+
+          model = list()
           #adding extra features for coefficient parameter
           if self.intercept:
               intercept = np.ones((features.shape[0], 1))
@@ -50,39 +59,58 @@ class LogisticRegression (AbstractML):
                     weights += self.learning_rate * gradient #update weights
                 self.listWeights.append(weights)
 
-          return self.listWeights
+          model.append(self.listWeights)
 
-      def predict(self, features, weights=None):
-          if weights != None:
-              self.listWeights = weights
+          if df is not None:
+              model.append(self.header)
+
+          return model
+
+      def predict(self, features=None, df=None, model=None, dummies=None):
+          if model is not None:
+              self.listWeights = model[0]
+              self.header = model[1]
+
+
+          if df is not None:
+              if dummies == 'yes':
+                  df = pd.get_dummies(df)
+
+              for key in self.header:
+                  if key not in list(df):
+                      df[key] = pd.Series(np.zeros((len(df)),dtype=int))
+
+              features = list()
+              for key in self.header:
+                  for key2 in list(df):
+                      if key == key2:
+                          features.append(df[key])
+              features = np.array(features).T
 
           final_scores_list = []
           prediction = []
 
           #calculate the scores in test set
           for kind in range(len(self.uniqueTarget)):
-                final_scores = np.dot(np.hstack((np.ones((features.shape[0], 1)),
-                                       features)), self.listWeights[kind])
-                final_scores_list.append(final_scores)
+              final_scores = np.dot(np.hstack((np.ones((features.shape[0], 1)),
+                                               features)), self.listWeights[kind])
+              final_scores_list.append(final_scores)
 
           #predict the label from scores
           for set in range (features.shape[0]):
-                predict_dictionary = {}
-                for kind in range(len(self.uniqueTarget)):
-                      predict_dictionary[self.uniqueTarget[kind]] = final_scores_list[kind][set]
-                prediction.append(max(predict_dictionary, key = lambda classLabel: predict_dictionary[classLabel]))
+              predict_dictionary = {}
+              for kind in range(len(self.uniqueTarget)):
+                  predict_dictionary[self.uniqueTarget[kind]] = final_scores_list[kind][set]
+              prediction.append(max(predict_dictionary, key = lambda classLabel: predict_dictionary[classLabel]))
 
           prediction = np.array(prediction)
           print("\nPrediction :")
           print (prediction)
           return prediction
 
-      def testing(self, features, target, weights=None):
-          if weights == None:
-              weights = self.listWeights
-
+      def testing(self, features, target, model=None):
           #get prediction
-          prediction = self.predict(features, weights)
+          prediction = self.predict(features, model=model)
 
           #calculate error
           error = 0
@@ -95,50 +123,38 @@ class LogisticRegression (AbstractML):
           return float(error)
 
 if __name__ == "__main__":
-      def playtennis() :
-            client = MongoClient()
-            db=client.newdb
-            collection=db.playtennis.find()
-            df =pd.DataFrame(list(collection))
-            del df['_id']
-            print (df)
-            target = df['play'].values.astype(str)
-            del df['play']
-            df = pd.get_dummies(df)
-            features = df.iloc[:,:].values
-            print (df)
-            return [features, target]
 
-      def iris() :
-            client = MongoClient()
-            db=client.newdb
-            collection=db.irisdataset.find()
-            df =pd.DataFrame(list(collection))
-            del df['_id']
-            print (df)
-            features = df.iloc[:,:-1].values.astype(float)
-            target = df.iloc[:,-1].values.astype(str)
-            return [features, target]
+      datafile = "irisdataset"
+      label = "species"
+      type = "classification"
+      dummies="no"
 
-      temp=sys.argv
       #Load data and Preperation Data
-
-      #Training Step
-
-      dataset = temp[-1]
-
-      if dataset == "playtennis":
-            [features, target] = playtennis()
-      else:
-            [features, target] = iris()
-
+      db = DatabaseConnector()
+      df = db.get_collection(datafile)
       #Training Step
       log_reg = LogisticRegression(num_steps=50000, learning_rate=5e-5)
-      weights = log_reg.training(features, target)
+      model = log_reg.training(df=df,label=label,type=type,dummies=dummies)
 
-      print ("Weights:")
-      print (weights)
+      predicton = log_reg.predict(df=df, model=model, dummies=dummies)
 
       #Testing Step
-      error = log_reg.testing(features, target)
       print ("\n Error : %f" %error +"%")
+
+      list_dum = np.array([["high", "false", "outcast", "hot"],["low", "truw", "rain", "cold"],
+                           ["high", "truw", "rain", "hot"], ["low", "false", "outcast", "cold"]])
+      dum_head = ["humidity", "windy", "outlook", "temp"]
+      df2=pd.DataFrame(list_dum, columns=dum_head)
+      dummies_df2 = pd.get_dummies(df2, prefix="", prefix_sep='')
+
+      tes_dum = np.array([["high", "truw", "hot"], ["low", "false", "hot"]])
+      tes_head = ["humidity", "windy", "temp"]
+      df3=pd.DataFrame(tes_dum, columns=tes_head)
+      dummies_df3 = pd.get_dummies(df3, prefix="", prefix_sep='')
+
+      dummies_df3.shape
+      len(dummies_df3)
+      for key in list(dummies_df2):
+          if key not in list(dummies_df3):
+              dummies_df3[key] = pd.Series(np.zeros((len(dummies_df3)), dtype=int))
+              print (key)

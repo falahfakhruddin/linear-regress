@@ -2,14 +2,22 @@ import pandas as pd
 from Abstraction import AbstractML
 import collections
 from DatabaseConnector import DatabaseConnector
+import tools as tl
 
 class NaiveBayess(AbstractML):
-    def __init__(self, header):
-        self.header = header
+    def __init__(self, header=None):
+        self.header=header
         self.weightDict = {}
         self.labelCounts = collections.defaultdict(lambda: 0)
 
-    def training(self, features, target):
+    def training(self, features=None, target=None, df=None, label=None, type=None):
+        #extract value of dataframe
+        if df is not None:
+            list_df = tl.dataframe_extraction(df=df , label=label , type=type )
+            features = list_df[0]
+            target = list_df[1]
+            self.header = list_df[2]
+
         listWeights = list()
         for counter in range(0, len(target)):  # label count
             self.labelCounts[target[counter]] += 1  # udpate count of the label
@@ -37,9 +45,12 @@ class NaiveBayess(AbstractML):
         return listWeights
 
 
-    def predict(self, features, weightDict=None):
-        if weightDict == None:
-            weightDict = self.weightDict
+    def predict(self, features=None, df=None, model=None):
+        if model is not None:
+            self.weightDict = model[0]
+
+        if df is not None:
+            features = df.values
 
         prediction = list()
         for vector in features:
@@ -48,7 +59,7 @@ class NaiveBayess(AbstractML):
             for label in self.labelCounts:
                 tempProb = 1
                 for featureValue in vector:
-                    tempProb *= weightDict[label][self.header[list_vector.index(featureValue)]][featureValue]
+                    tempProb *= self.weightDict[label][self.header[list_vector.index(featureValue)]][featureValue]
                 tempProb *= self.labelCounts[label]
                 probabilityPerLabel[label] = tempProb
             print(probabilityPerLabel)
@@ -60,11 +71,8 @@ class NaiveBayess(AbstractML):
 
 
     def testing(self, features, target, weights=None):
-        if weights != None:
-            self.weightDict = weights[0]
-
         # get prediction
-        prediction = self.predict(features, self.weightDict)
+        prediction = self.predict(features, model=weights)
 
         # calculate error
         error = 0
@@ -77,15 +85,19 @@ class NaiveBayess(AbstractML):
 
 if __name__ == "__main__":
     #get collection
+    datafile = "playtennis"
+    label = "play"
+    type = "classification"
+
+    # Load data and Preperation Data
     db = DatabaseConnector()
-    df = db.get_collection("playtennis", "play", dummies='no')
-    features = df[0]
-    target = df[1]
-    header = df[2]
+    df = db.get_collection(datafile)
 
-    #training
-    nb = NaiveBayess(header)
-    weight = nb.training(features, target)
+    # Training Step
+    nb = NaiveBayess()
+    model = nb.training(df=df , label=label , type=type )
 
-    #testing
-    result = nb.testing(features, target)
+    #predict
+    predicton = nb.predict(df=df , model=model)
+
+

@@ -93,15 +93,15 @@ if __name__ == "__main__":
 
     #extract data
     db = DatabaseConnector()
-    df = db.get_collection("homeprice")
-    list_df = tl.dataframe_extraction(df,label='Price', type='regression')
+    df = db.get_collection("irisdataset")
+    list_df = tl.dataframe_extraction(df, label='species', type='classification', dummies='no')
     features = list_df[0]
     target = list_df[1]
     header = list_df[2]
 
     #kfold
     k = 4
-    errors = kfoldcv(MultiVariateRegression(), features, target, k=k)
+    errors = kfoldcv(SklearnNeuralNet(), features, target, k=k)
 
     # Compute statistics
     mean = sum(errors) / k
