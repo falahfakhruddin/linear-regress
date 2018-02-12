@@ -10,7 +10,7 @@ class NaiveBayess(AbstractML):
         self.weightDict = {}
         self.labelCounts = collections.defaultdict(lambda: 0)
 
-    def training(self, features=None, target=None, df=None, label=None, type=None):
+    def training(self, features=None, target=None, df=None, label=None, type=None, dummies='no'):
         #extract value of dataframe
         if df is not None:
             list_df = tl.dataframe_extraction(df=df , label=label , type=type )
