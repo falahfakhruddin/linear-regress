@@ -30,7 +30,7 @@ class SklearnNeuralNet(AbstractML):
 
     def predict(self, features=None, df=None, model=None, dummies=None):
         if model != None:
-            binary_mlp = model[0]
+            binary_mlp = bytearray(model[0])
             self.mlp = pickle.loads(binary_mlp)
             self.header = model[1]
 
