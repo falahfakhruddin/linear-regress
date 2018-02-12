@@ -7,8 +7,8 @@ Created on Wed Dec 27 10:14:33 2017
 import numpy as np
 import numpy.ma as ma
 from Abstraction import AbstractPreprocessing
-from scipy import stats            
-            
+from scipy import stats
+from random import randint
 
 class DataCleaning(AbstractPreprocessing):
       def __init__ (self, missingValues = "NaN", strategy = "mode", axis = 0):
@@ -81,16 +81,43 @@ if __name__ == "__main__":
       dc.fit(ab)
       ab = dc.transform(ab)
 
-"""
-#fill missing value
-from random import randint
-#fit
-mode_values = dict()
-for head in list(newdf):
-    mode = newdf[head].mode()
-    mode2 = mode[randint(0,len(mode)-1)]
-    mode_values[head] = mode2 
+class DataCleaning2(AbstractPreprocessing):
+    def __init__(self, style='mode'):
+        self.style = style
 
-#trasform
-newnewdf = newdf.fillna(value=mode_values)
-"""
+    def median(self , newdf):
+        median_values = dict()
+        for head in list(newdf):
+            median = newdf[head].median()
+            median_values[head] = median
+        return median_values
+
+    def mean(self , newdf):
+        mean_values = dict()
+        for head in list(newdf):
+            mean = newdf[head].mean()
+            mean_values[head] = mean
+        return mean_values
+
+    def mode(self, newdf):
+        mode_values = dict()
+        for head in list(newdf):
+            mode = newdf[head].mode()
+            mode2 = mode[randint(0,len(mode)-1)]
+            mode_values[head] = mode2
+        return mode_values
+
+    def fit(self, newdf, style):
+        if style == 'mode':
+            values = self.mode(newdf)
+        elif style == 'mean':
+            values = self.mean(newdf)
+        elif style == 'median':
+            values = self.median(newdf)
+
+        return values
+
+    def transform(self, newdf):
+        values = self.fit(newdf, self.style)
+        newdf = newdf.fillna(value=values)
+        return newdf
