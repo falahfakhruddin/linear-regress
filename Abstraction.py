@@ -22,9 +22,5 @@ class AbstractML(ABC):
 
 class AbstractPreprocessing(ABC):
       @abstractmethod
-      def fit(self):
-            pass
-
-      @abstractmethod
       def transform(self):
             pass

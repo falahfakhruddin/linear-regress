@@ -32,7 +32,7 @@ def dataframe_extraction(df, label, type='classification', dummies='no' ):
     del df[label]
 
     if dummies == 'yes':
-        features = pd.get_dummies(df)
+        features = pd.get_dummies(df)*1
         header = list(features)
         features = features.values
 

@@ -12,13 +12,12 @@ from mongoengine import *
 
 
 class DatabaseConnector():
-    def get_collection(self, datafile, database='newdb'):  # get dataframe
+    def get_collection(self, datafile='irisdataset', database='newdb'):  # get dataframe
         client = MongoClient()
         db = client[database]
         collection = db[datafile].find()
         df = pd.DataFrame(list(collection))
         del df['_id']
-
         return df
 
     def export_collection(self, jsonfile, collection, database='newdb'):  # upload json file into database
@@ -30,7 +29,7 @@ class DatabaseConnector():
 class SaveModel(Document):
     dataset = StringField(max_length=100, required=True)
     algorithm = StringField(max_length=100, required=True)
-    preprocessing = ListField(BinaryField(), max_length=50, required=True)
+    preprocessing = ListField(max_length=50, required=True)
     model = ListField(max_length=50, required=True)
     create = DateTimeField(default=datetime.datetime.now)
 
