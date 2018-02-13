@@ -107,17 +107,18 @@ class DataCleaning2(AbstractPreprocessing):
             mode_values[head] = mode2
         return mode_values
 
-    def fit(self, newdf, style):
-        if style == 'mode':
+    def fit(self, newdf):
+        if self.style == 'mode':
             values = self.mode(newdf)
-        elif style == 'mean':
+        elif self.style == 'mean':
             values = self.mean(newdf)
-        elif style == 'median':
+        elif self.style == 'median':
             values = self.median(newdf)
 
         return values
 
-    def transform(self, newdf):
-        values = self.fit(newdf, self.style)
+    def transform(self, newdf, values=None):
+        if values == None:
+            values = self.fit(newdf)
         newdf = newdf.fillna(value=values)
         return newdf
