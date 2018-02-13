@@ -13,7 +13,7 @@ from FeatureSelection import FeatureSelection
 from datetime import date
 
 
-class MLrun():
+class MLtrain():
     def __init__(self, dataset, label, type, algorithm, preprocessing, dummies, database):
         self.dataset = dataset
         self.label = label
@@ -57,15 +57,23 @@ class MLrun():
             df = self.preprocessing_step()
 
         elif self.database == "MLdb":
+
+            for item in self.preprocessing:
+                self.dataset = self.dataset + "_" + item.__class__.__name__
+
             # get db
             db = DatabaseConnector()
-            df = db.get_collection(self.dataset, database='MLdb')
+            if self.dataset in db.check_collection(database='MLdb'):
 
-            connect('MLdb')
-            temp = SaveModel.objects(dataset=self.dataset)
-            for data in temp:
-                self.prepo_parameter = data.preprocessing
+                connect('MLdb')
+                temp = SaveModel.objects(dataset=self.dataset)
+                for data in temp:
+                    self.prepo_parameter = data.preprocessing
+                df = db.get_collection(self.dataset, database='MLdb')
 
+            else:
+                self.dataset, waste = self.dataset.split("_", 1)
+                df = self.preprocessing_step()
 
         #training
         ml = self.algorithm
@@ -77,8 +85,65 @@ class MLrun():
         savedb.save()
         return model
 
+class MLtest():
+    def __init__(self, dataset, preprocessing, algorithm):
+        self.dataset = dataset
+        self.preprocessing = preprocessing
+        self.algorithm = algorithm
+
+    def implement_preprocessing(self):
+        # get db
+        db = DatabaseConnector()
+        df = db.get_collection(self.dataset , database='rawdb')
+
+        for item in preprocessing:
+            prepro_name = item.__class__.__name__
+            connect('MLdb')
+            temp = SaveModel.objects(dataset=dataset)
+            for data in temp:
+                prepo_dict = data.preprocessing
+            values = (prepo_dict[prepro_name])
+            df = item.transform(values=values)
+
+        return df
+
+    def prediction_step(self):
+        for item in preprocessing:
+            self.dataset = self.dataset + "_" + item
+
+        temp = SaveModel.objects(algorithm=self.algorithm.__class__.__name__)
+        for data in temp:
+            model = data.model
+
+        df = self.implement_preprocessing()
+        ml = self.algorithm
+        prediction = ml.predict(df=df, model=model)
+
+        return prediction
+
+
+
 if __name__ == "__main__":
     dataset = "homeprice"
     preprocessing = [FeatureSelection(), DataCleaning2()]
-    ml = MLrun()
+    ml = MLtrain()
     result = ml.preprocessing_step(dataset, preprocessing)
+
+    from mongoengine import *
+    from DatabaseConnector import *
+
+    dataset = "irisdataset"
+    preprocessing = [FeatureSelection(), DataCleaning2()]
+
+    for item in preprocessing:
+        dataset = dataset + "_" + item.__class__.__name__
+
+    print(dataset)
+    for item in preprocessing:
+        prepro_name = item.__class__.__name__
+        connect('MLdb')
+        temp = SaveModel.objects(dataset=dataset)
+        for data in temp:
+            prepo_dict=data.preprocessing
+        values = (prepo_dict[prepro_name])
+        df = item.transform(values=values)

@@ -14,7 +14,7 @@ class FeatureSelection(AbstractPreprocessing):
       def fit (self, df):
             return None
 
-      def transform(self, df):
+      def transform(self, df, values=None):
             threshold = int((self.percentage * df.shape[1]) + 0.5)  # fit
             return df.dropna(thresh=threshold)
 

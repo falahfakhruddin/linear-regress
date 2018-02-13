@@ -26,6 +26,12 @@ class DatabaseConnector():
         upload = db[collection]
         return upload.insert_many(jsonfile).inserted_ids
 
+    def check_collection(self, database="newdb"):
+        client = MongoClient()
+        db = client[database]
+        collection = db.collection_names(include_system_collections=False)
+        return collection
+
 class SaveModel(Document):
     dataset = StringField(max_length=100, required=True)
     algorithm = StringField(max_length=100, required=True)
