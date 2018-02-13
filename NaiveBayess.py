@@ -85,19 +85,25 @@ class NaiveBayess(AbstractML):
 
 if __name__ == "__main__":
     #get collection
-    datafile = "playtennis"
-    label = "play"
+    datafile = "irisdataset_FeatureSelection_DataCleaning2"
+    label = "species"
     type = "classification"
 
     # Load data and Preperation Data
     db = DatabaseConnector()
-    df = db.get_collection(datafile)
+    df = db.get_collection(datafile, database='MLdb')
 
+    target = df['species'].values
     # Training Step
     nb = NaiveBayess()
-    model = nb.training(df=df , label=label , type=type )
+    model2 = nb.training(df=df , label=label , type=type )
+
+    from mongoengine import *
+    from DatabaseConnector import *
+    connect('MLdb')
+    temp = SaveModel.objects(algorithm=nb.__class__.__name__)
+    for data in temp:
+        model = data.model
 
     #predict
     predicton = nb.predict(df=df , model=model)
-
-

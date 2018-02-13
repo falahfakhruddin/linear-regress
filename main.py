@@ -1,4 +1,4 @@
-from MLrunner import MLrun
+from MLrunner import *
 from FeatureSelection import FeatureSelection
 from DataCleaning import DataCleaning2
 from NaiveBayess import NaiveBayess
@@ -7,6 +7,7 @@ from MLPClassifier import SklearnNeuralNet
 from LogisticRegression import LogisticRegression
 
 if __name__ == "__main__":
+    """
     # preprocessing
     dataset = "homeprice"
     target = "Price"
@@ -15,10 +16,18 @@ if __name__ == "__main__":
     database = 'MLdb'
     algorithm = MultiVariateRegression()
     preprocessing = [FeatureSelection(), DataCleaning2()]
-    ml = MLrun(dataset, target, method, algorithm, preprocessing, dummies, database)
+    ml = MLtrain(dataset, target, method, algorithm, preprocessing, dummies, database)
     listWeights = ml.training_step()
+    """
 
     # testing step
+    dataset = "irisdataset"
+    preprocessing = [FeatureSelection(), DataCleaning2()]
+    algorithm = SklearnNeuralNet()
+    ml = MLtest(dataset, preprocessing, algorithm)
+    prediction = ml.prediction_step()
+    print (prediction)
+
     # str(preprocessing)
     # prediction = model.predict(features, listWeights=weights)
     # testing = model.testing(features, target, weights=weights)

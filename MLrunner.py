@@ -94,28 +94,31 @@ class MLtest():
     def implement_preprocessing(self):
         # get db
         db = DatabaseConnector()
-        df = db.get_collection(self.dataset , database='rawdb')
+        df = db.get_collection(self.dataset , database='MLdb')
 
-        for item in preprocessing:
+        for item in self.preprocessing:
             prepro_name = item.__class__.__name__
             connect('MLdb')
-            temp = SaveModel.objects(dataset=dataset)
+            temp = SaveModel.objects(dataset=self.dataset)
             for data in temp:
                 prepo_dict = data.preprocessing
             values = (prepo_dict[prepro_name])
-            df = item.transform(values=values)
+            df = item.transform(df, values=values)
 
         return df
 
     def prediction_step(self):
-        for item in preprocessing:
-            self.dataset = self.dataset + "_" + item
+        for item in self.preprocessing:
+            self.dataset = self.dataset + "_" + item.__class__.__name__
 
+        connect('MLdb')
         temp = SaveModel.objects(algorithm=self.algorithm.__class__.__name__)
         for data in temp:
             model = data.model
 
         df = self.implement_preprocessing()
+        print(df)
+
         ml = self.algorithm
         prediction = ml.predict(df=df, model=model)
 
