@@ -29,10 +29,14 @@ class DatabaseConnector():
 class SaveModel(Document):
     dataset = StringField(max_length=100, required=True)
     algorithm = StringField(max_length=100, required=True)
-    preprocessing = ListField(max_length=50, required=True)
+    preprocessing = DictField(max_length=50, required=True)
     model = ListField(max_length=50, required=True)
     create = DateTimeField(default=datetime.datetime.now)
 
+class SavePrepocessing(Document):
+    dataset = StringField(max_length=100, required=True)
+    preprocessing = DictField(max_length=50, required=True)
+    create = DateTimeField(default=datetime.datetime.now)
 """        
 logout = {
     "topic" : ,
@@ -89,10 +93,10 @@ if __name__ == "__main__":
     post1.save()
 
     # extract value from
-    connect('modeldb')
-    temp = SaveModel.objects(dataset="clean_irisdataset")
+    connect('MLdb')
+    temp = SaveModel.objects(dataset="irisdataset")
     for data in temp:
-        y = (data.model)
+        print(data.model)
 
 
 
