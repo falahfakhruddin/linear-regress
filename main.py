@@ -8,12 +8,12 @@ from LogisticRegression import LogisticRegression
 
 if __name__ == "__main__":
     # preprocessing
-    dataset = "playtennis"
-    target = "play"
-    method = "classification"
-    dummies = 'yes'
-    database = 'rawdb'
-    algorithm = LogisticRegression()
+    dataset = "homeprice"
+    target = "Price"
+    method = "regression"
+    dummies = 'no'
+    database = 'MLdb'
+    algorithm = MultiVariateRegression()
     preprocessing = [FeatureSelection(), DataCleaning2()]
     ml = MLrun(dataset, target, method, algorithm, preprocessing, dummies, database)
     listWeights = ml.training_step()
@@ -43,4 +43,4 @@ if __name__ == "__main__":
 #         if new[i] != target[i]:
 #             j+=1
 #     print (j)
-# len(features)
+# len(features) parkir 2000, tahu 5000, bu tatang 25000,
