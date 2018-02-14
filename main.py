@@ -7,18 +7,18 @@ from MLPClassifier import SklearnNeuralNet
 from LogisticRegression import LogisticRegression
 
 if __name__ == "__main__":
-    """
-    # preprocessing
-    dataset = "homeprice"
-    target = "Price"
-    method = "regression"
-    dummies = 'no'
+
+    # training step
+    dataset = "playtennis"
+    target = "play"
+    method = "classification"
+    dummies = 'yes'
     database = 'MLdb'
-    algorithm = MultiVariateRegression()
+    algorithm = LogisticRegression()
     preprocessing = [FeatureSelection(), DataCleaning2()]
     ml = MLtrain(dataset, target, method, algorithm, preprocessing, dummies, database)
     listWeights = ml.training_step()
-    """
+
 
     # testing step
     dataset = "playtennis"

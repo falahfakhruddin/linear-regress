@@ -60,7 +60,7 @@ class LogisticRegression (AbstractML):
                 self.listWeights.append(weights)
 
           model.append(self.listWeights)
-
+          model.append(self.uniqueTarget)
           if df is not None:
               model.append(self.header)
 
@@ -69,8 +69,8 @@ class LogisticRegression (AbstractML):
       def predict(self, features=None, df=None, model=None, dummies=None):
           if model is not None:
               self.listWeights = model[0]
-              self.header = model[1]
-
+              self.uniqueTarget = model[1]
+              self.header = model[-1]
 
           if df is not None:
               if dummies == 'yes':
