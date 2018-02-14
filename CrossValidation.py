@@ -94,7 +94,7 @@ if __name__ == "__main__":
     #extract data
     db = DatabaseConnector()
     df = db.get_collection("irisdataset")
-    list_df = tl.dataframe_extraction(df, label='species', type='classification', dummies='no')
+    list_df = tl.dataframe_extraction(df, label='species', type='classification', dummies=False)
     features = list_df[0]
     target = list_df[1]
     header = list_df[2]

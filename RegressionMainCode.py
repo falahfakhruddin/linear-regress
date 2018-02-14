@@ -65,7 +65,7 @@ class MultiVariateRegression(AbstractML):
               self.header = model[1]
 
           if df is not None:
-              if dummies == 'yes':
+              if dummies:
                   df = pd.get_dummies(df)
 
               for key in self.header:
@@ -102,7 +102,7 @@ if __name__ == "__main__":
     datafile = "homeprice"
     label = "Price"
     type = "regression"
-    dummies = "no"
+    dummies = False
 
     # Load data and Preperation Data
     db = DatabaseConnector()

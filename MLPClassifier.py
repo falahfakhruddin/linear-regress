@@ -35,7 +35,7 @@ class SklearnNeuralNet(AbstractML):
             self.header = model[1]
 
         if df is not None:
-            if dummies == 'yes':
+            if dummies:
                 df = pd.get_dummies(df)
 
             for key in self.header:

@@ -38,7 +38,7 @@ class SaveModel(Document):
     preprocessing = DictField(max_length=50, required=True)
     model = ListField(max_length=50, required=True)
     create = DateTimeField(default=datetime.datetime.now)
-    dummies = StringField(max_length=50, required=True)
+    dummies = BooleanField(required=True)
 
 class SavePrepocessing(Document):
     dataset = StringField(max_length=100, required=True)
