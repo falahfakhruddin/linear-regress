@@ -81,7 +81,8 @@ class MLtrain():
 
         #savedb
         connect(db="MLdb")
-        savedb = SaveModel(dataset=self.dataset, algorithm= self.algorithm.__class__.__name__, preprocessing=self.prepo_parameter, model=model)
+        savedb = SaveModel(dataset=self.dataset, algorithm= self.algorithm.__class__.__name__,
+                           preprocessing=self.prepo_parameter, model=model, dummies=self.dummies)
         savedb.save()
         return model
 
@@ -111,16 +112,18 @@ class MLtest():
         for item in self.preprocessing:
             self.dataset = self.dataset + "_" + item.__class__.__name__
 
+        df = self.implement_preprocessing()
+        print(df)
+
         connect('MLdb')
         temp = SaveModel.objects(algorithm=self.algorithm.__class__.__name__)
         for data in temp:
             model = data.model
+            dummies = data.dummies
 
-        df = self.implement_preprocessing()
-        print(df)
 
         ml = self.algorithm
-        prediction = ml.predict(df=df, model=model)
+        prediction = ml.predict(df=df, model=model, dummies=dummies)
 
         return prediction
 

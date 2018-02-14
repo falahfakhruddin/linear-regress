@@ -21,9 +21,9 @@ if __name__ == "__main__":
     """
 
     # testing step
-    dataset = "irisdataset"
+    dataset = "playtennis"
     preprocessing = [FeatureSelection(), DataCleaning2()]
-    algorithm = SklearnNeuralNet()
+    algorithm = LogisticRegression()
     ml = MLtest(dataset, preprocessing, algorithm)
     prediction = ml.prediction_step()
     print (prediction)
