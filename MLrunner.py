@@ -66,7 +66,7 @@ class MLtrain():
             if self.dataset in db.check_collection(database='MLdb'):
 
                 connect('MLdb')
-                temp = SaveModel.objects(dataset=self.dataset)
+                temp = SavePrepocessing.objects(dataset=self.dataset)
                 for data in temp:
                     self.prepo_parameter = data.preprocessing
                 df = db.get_collection(self.dataset, database='MLdb')
@@ -74,6 +74,9 @@ class MLtrain():
             else:
                 self.dataset, waste = self.dataset.split("_", 1)
                 df = self.preprocessing_step()
+
+        print ("aselole")
+        print(self.prepo_parameter)
 
         #training
         ml = self.algorithm
@@ -120,7 +123,6 @@ class MLtest():
         for data in temp:
             model = data.model
             dummies = data.dummies
-
 
         ml = self.algorithm
         prediction = ml.predict(df=df, model=model, dummies=dummies)

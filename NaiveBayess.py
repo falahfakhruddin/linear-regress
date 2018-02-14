@@ -42,14 +42,20 @@ class NaiveBayess(AbstractML):
 
 
         listWeights.append(self.weightDict)
+        listWeights.append(self.labelCounts)
+        listWeights.append(self.header)
         return listWeights
 
 
-    def predict(self, features=None, df=None, model=None):
+    def predict(self, features=None, df=None, model=None, dummies='no'):
         if model is not None:
             self.weightDict = model[0]
+            self.labelCounts = model[1]
+            self.header = model[2]
 
         if df is not None:
+            target = list(set(list(df)).difference(self.header))
+            del df[target[0]]
             features = df.values
 
         prediction = list()
@@ -85,15 +91,14 @@ class NaiveBayess(AbstractML):
 
 if __name__ == "__main__":
     #get collection
-    datafile = "irisdataset_FeatureSelection_DataCleaning2"
-    label = "species"
+    datafile = "playtennis_FeatureSelection_DataCleaning2"
+    label = "play"
     type = "classification"
 
     # Load data and Preperation Data
     db = DatabaseConnector()
     df = db.get_collection(datafile, database='MLdb')
 
-    target = df['species'].values
     # Training Step
     nb = NaiveBayess()
     model2 = nb.training(df=df , label=label , type=type )
@@ -107,3 +112,36 @@ if __name__ == "__main__":
 
     #predict
     predicton = nb.predict(df=df , model=model)
+
+    model[1]['yes']
+
+    if model is not None:
+        weightDict = model[0]
+        labelCounts = model[1]
+        header = model[2]
+
+    if df is not None:
+        features = df.values
+
+    prediction = list()
+    for vector in features:
+        list_vector = vector.tolist()
+        probabilityPerLabel = {}
+        for label in labelCounts:
+            x = label
+            tempProb = 1
+            for featureValue in vector:
+                y = featureValue
+                tempProb *= weightDict[x][header[list_vector.index(featureValue)]][featureValue]
+            tempProb *= labelCounts[x]
+            probabilityPerLabel[x] = tempProb
+        print(probabilityPerLabel)
+        prediction.append(max(probabilityPerLabel , key=lambda classLabel: probabilityPerLabel[classLabel]))
+
+    print("\nPrediction :")
+    print(prediction)
+
+    target = list(set(list(df)).difference(header))
+
+    del df[target[0]]
+    target[0]

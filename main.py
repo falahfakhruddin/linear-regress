@@ -9,21 +9,21 @@ from LogisticRegression import LogisticRegression
 if __name__ == "__main__":
 
     # training step
-    dataset = "playtennis"
-    target = "play"
-    method = "classification"
-    dummies = 'yes'
+    dataset = "homeprice"
+    target = "Price"
+    method = "regression"
+    dummies = 'no'
     database = 'MLdb'
-    algorithm = LogisticRegression()
+    algorithm = MultiVariateRegression()
     preprocessing = [FeatureSelection(), DataCleaning2()]
     ml = MLtrain(dataset, target, method, algorithm, preprocessing, dummies, database)
     listWeights = ml.training_step()
 
 
     # testing step
-    dataset = "playtennis"
+    dataset = "homeprice"
     preprocessing = [FeatureSelection(), DataCleaning2()]
-    algorithm = LogisticRegression()
+    algorithm = MultiVariateRegression()
     ml = MLtest(dataset, preprocessing, algorithm)
     prediction = ml.prediction_step()
     print (prediction)
