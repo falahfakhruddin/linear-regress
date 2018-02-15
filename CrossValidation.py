@@ -110,31 +110,3 @@ if __name__ == "__main__":
     confidenceInterval = (mean - 1.96 * standardDeviation, mean + 1.96 * standardDeviation)
     print (mean)
 
-
-"""
-class CrossValidation():
-    def train_test_split(self, dataset, test_size=0.60):
-        train_size = int(test_size * len(dataset))
-        shuffle(dataset)
-        train = dataset[:train_size]
-        dataset = np.delete(dataset, np.s_[0:train_size], axis=0)
-        train = np.array_split(train, [-1], axis=1)
-        test = np.array_split(dataset, [-1], axis=1)
-        X_train = np.array(train[0])
-        y_train = train[1]
-        X_test = test[0]
-        y_test = test[1]
-        return X_train, X_test, y_train, y_test
-
-
-features = np.array([[1, 2, 3, 4], [2, 3, 4, 5], [3, 5, 2, 3], [4, 5, 2, 3],
-                     [5, 5, 2, 4], [6, 6, 4, 3], [7, 5, 4, 1], [8, 3, 5, 1]])
-target = np.array(['1', '2', '3', '4', '5', '6', '7', '8'])
-
-training_set = training_set_feature, training_set_target
-
-_output(
-    "\t\tMean = {0:.2f} \n\t\tVariance = {1:.4f} \n\t\tStandard Devation = {2:.3f} \n\t\t95% Confidence interval: [{3:.2f}, {4:.2f}]" \
-        .format(mean, variance, standardDeviation, confidenceInterval[0], confidenceInterval[1]))
-return (errors, mean, variance, confidenceInterval, k)
-"""
