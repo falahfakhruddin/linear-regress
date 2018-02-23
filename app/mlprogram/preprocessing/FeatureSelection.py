@@ -4,7 +4,7 @@ Created on Fri Dec 29 08:53:37 2017
 
 @author: falah.fakhruddin
 """
-from Abstraction import AbstractPreprocessing
+from app.mlprogram.Abstraction import AbstractPreprocessing
 import numpy as np
 
 class FeatureSelection(AbstractPreprocessing):

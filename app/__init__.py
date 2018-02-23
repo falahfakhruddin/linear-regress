@@ -2,6 +2,7 @@ from flask import Flask, request, render_template, redirect, url_for, flash
 from flask_mongoengine import MongoEngine
 #from .flaskmongo import PlayTennis
 import json
+from .mlprogram import main
 
 db=MongoEngine()
 app=Flask(__name__)
@@ -59,3 +60,12 @@ def testing():
         data= request.form['gender']
         return json.dumps({'data' : str(data)})
     return render_template('radio.html')
+
+@app.route('/api/predict', methods = ['POST'])
+def predicting():
+    data = request.get_json()
+    preprocessing = data['preprocessing']
+    algorithm = data['algorithm']
+    dataset = data['dataset']
+    predict = main.prediction(dataset, preprocessing, algorithm)
+    return json.dumps({'prediction' : predict})

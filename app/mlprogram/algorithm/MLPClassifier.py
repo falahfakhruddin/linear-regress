@@ -1,10 +1,10 @@
 from sklearn.neural_network import MLPClassifier
-from Abstraction import AbstractML
-from DatabaseConnector import DatabaseConnector
+from app.mlprogram.Abstraction import AbstractML
+from ..DatabaseConnector import DatabaseConnector
 import pandas as pd
 import numpy as np
 import pickle
-import tools as tl
+from app.mlprogram import tools as tl
 
 
 class SklearnNeuralNet(AbstractML):

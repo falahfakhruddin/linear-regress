@@ -1,8 +1,8 @@
 import pandas as pd
-from Abstraction import AbstractML
+from app.mlprogram.Abstraction import AbstractML
 import collections
-from DatabaseConnector import DatabaseConnector
-import tools as tl
+from ..DatabaseConnector import DatabaseConnector
+from app.mlprogram import tools as tl
 
 class NaiveBayess(AbstractML):
     def __init__(self, header=None):

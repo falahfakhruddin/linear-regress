@@ -6,7 +6,7 @@ Created on Wed Dec 27 10:14:33 2017
 """
 import numpy as np
 import numpy.ma as ma
-from Abstraction import AbstractPreprocessing
+from app.mlprogram.Abstraction import AbstractPreprocessing
 from scipy import stats
 from random import randint
 

@@ -4,13 +4,13 @@ Created on Mon Jan  8 13:41:39 2018
 
 @author: falah.fakhruddin
 """
-from Abstraction import AbstractML
+from app.mlprogram.Abstraction import AbstractML
 import sys
-from DatabaseConnector import DatabaseConnector
+from ..DatabaseConnector import DatabaseConnector
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import tools as tl
+from app.mlprogram import tools as tl
 
 
 class MultiVariateRegression(AbstractML):

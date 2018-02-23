@@ -1,15 +1,15 @@
 import pandas as pd
-from DatabaseConnector import *
+from .DatabaseConnector import *
 from mongoengine import *
 import numpy as np
-import tools as tl
-from algorithm.LogisticRegression import LogisticRegression
-from algorithm.RegressionMainCode import MultiVariateRegression
-from algorithm.MLPClassifier import SklearnNeuralNet
-from algorithm.NaiveBayess import NaiveBayess
-from preprocessing.DataCleaning import DataCleaning2
-from preprocessing.Normalization import Normalization
-from preprocessing.FeatureSelection import FeatureSelection
+from . import tools as tl
+from .algorithm.LogisticRegression import LogisticRegression
+from .algorithm.RegressionMainCode import MultiVariateRegression
+from .algorithm.MLPClassifier import SklearnNeuralNet
+from .algorithm.NaiveBayess import NaiveBayess
+from .preprocessing.DataCleaning import DataCleaning2
+from .preprocessing.Normalization import Normalization
+from .preprocessing.FeatureSelection import FeatureSelection
 from datetime import date
 
 

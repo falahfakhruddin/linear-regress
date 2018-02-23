@@ -4,12 +4,12 @@ Created on Fri Dec  8 13:28:20 2017
 
 @author: falah.fakhruddin
 """
-from Abstraction import AbstractML
 import sys
+from app.mlprogram.Abstraction import AbstractML
 import numpy as np
 import pandas as pd
-import tools as tl
-from DatabaseConnector import *
+from app.mlprogram import tools as tl
+from ..DatabaseConnector import *
 
 class LogisticRegression (AbstractML):
       def __init__(self, num_steps=50000, learning_rate=5e-5, intercept=True):
