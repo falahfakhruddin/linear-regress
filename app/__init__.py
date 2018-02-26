@@ -1,9 +1,9 @@
-"""
+
 from flask import Flask, request, render_template, redirect, url_for, flash
 from flask_mongoengine import MongoEngine
 #from .flaskmongo import PlayTennis
 import json
-from .mlprogram import main
+from app.mlprogram import main
 
 db=MongoEngine()
 app=Flask(__name__)
@@ -70,4 +70,3 @@ def predicting():
     dataset = data['dataset']
     predict = main.prediction(dataset, preprocessing, algorithm)
     return json.dumps({'prediction' : predict})
-"""
