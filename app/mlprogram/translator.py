@@ -1,19 +1,22 @@
-from .preprocessing.FeatureSelection import FeatureSelection
-from .preprocessing.DataCleaning import DataCleaning2
-from .algorithm.NaiveBayess import NaiveBayess
-from .algorithm.RegressionMainCode import MultiVariateRegression
-from .algorithm.MLPClassifier import SklearnNeuralNet
-from .algorithm.LogisticRegression import LogisticRegression
+from app.mlprogram.preprocessing.FeatureSelection import FeatureSelection
+from app.mlprogram.preprocessing.DataCleaning import DataCleaning2
+from app.mlprogram.algorithm.NaiveBayess import NaiveBayess
+from app.mlprogram.algorithm.RegressionMainCode import MultiVariateRegression
+from app.mlprogram.algorithm.MLPClassifier import SklearnNeuralNet
+from app.mlprogram.algorithm.LogisticRegression import LogisticRegression
 
-def algorithm_trans(algo_str):
-    if algo_str == 'naive bayess':
+from app.mlprogram.preprocessing.FeatureSelection import FeatureSelection
+from app.mlprogram.preprocessing.DataCleaning import DataCleaning2
+
+def algorithm_trans(algorithm):
+    if algorithm == 'naive bayess':
         return NaiveBayess()
-    elif algo_str == 'regression':
+    elif algorithm == 'regression':
         return MultiVariateRegression()
-    elif algo_str == 'logistic regression':
+    elif algorithm == 'logistic regression':
         return LogisticRegression()
-    elif algo_str == 'neural network':
-        return SklearnNeuralNet()
+    elif algorithm == 'neural network':
+        return  SklearnNeuralNet()
 
 def preprocessing_trans(prepo_str):
     prepo_list = []

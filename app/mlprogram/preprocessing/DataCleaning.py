@@ -6,9 +6,9 @@ Created on Wed Dec 27 10:14:33 2017
 """
 import numpy as np
 import numpy.ma as ma
-from app.mlprogram.Abstraction import AbstractPreprocessing
 from scipy import stats
 from random import randint
+from app.mlprogram.Abstraction import AbstractPreprocessing
 
 class DataCleaning(AbstractPreprocessing):
       def __init__ (self, missingValues = "NaN", strategy = "mode", axis = 0):

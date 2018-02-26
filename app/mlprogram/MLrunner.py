@@ -1,16 +1,16 @@
 import pandas as pd
-from .DatabaseConnector import *
 from mongoengine import *
 import numpy as np
-from . import tools as tl
-from .algorithm.LogisticRegression import LogisticRegression
-from .algorithm.RegressionMainCode import MultiVariateRegression
-from .algorithm.MLPClassifier import SklearnNeuralNet
-from .algorithm.NaiveBayess import NaiveBayess
-from .preprocessing.DataCleaning import DataCleaning2
-from .preprocessing.Normalization import Normalization
-from .preprocessing.FeatureSelection import FeatureSelection
 from datetime import date
+from app.mlprogram.DatabaseConnector import *
+from app.mlprogram import tools as tl
+from app.mlprogram.algorithm.LogisticRegression import LogisticRegression
+from app.mlprogram.algorithm.RegressionMainCode import MultiVariateRegression
+from app.mlprogram.algorithm.MLPClassifier import SklearnNeuralNet
+from app.mlprogram.algorithm.NaiveBayess import NaiveBayess
+from app.mlprogram.preprocessing.DataCleaning import DataCleaning2
+from app.mlprogram.preprocessing.Normalization import Normalization
+from app.mlprogram.preprocessing.FeatureSelection import FeatureSelection
 
 
 class MLtrain():

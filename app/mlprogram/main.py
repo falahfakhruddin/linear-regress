@@ -1,11 +1,12 @@
-from .MLrunner import *
-from .preprocessing.FeatureSelection import FeatureSelection
-from .preprocessing.DataCleaning import DataCleaning2
-from .algorithm.NaiveBayess import NaiveBayess
-from .algorithm.RegressionMainCode import MultiVariateRegression
-from .algorithm.MLPClassifier import SklearnNeuralNet
-from .algorithm.LogisticRegression import LogisticRegression
-from . import translator as trans
+import json
+from app.mlprogram.MLrunner import *
+from app.mlprogram.preprocessing.FeatureSelection import FeatureSelection
+from app.mlprogram.preprocessing.DataCleaning import DataCleaning2
+from app.mlprogram.algorithm.NaiveBayess import NaiveBayess
+from app.mlprogram.algorithm.RegressionMainCode import MultiVariateRegression
+from app.mlprogram.algorithm.MLPClassifier import SklearnNeuralNet
+from app.mlprogram.algorithm.LogisticRegression import LogisticRegression
+from app.mlprogram import translator as trans
 
 def training():
     # training step
@@ -27,9 +28,8 @@ def prediction(dataset, str_prepro, str_algo):
     ml = MLtest(dataset, preprocessing, algorithm)
     prediction = ml.prediction_step()
     return prediction
-   
+
 if __name__ == "__main__":
-    
     post = json.dumps({ 
         "preprocessing" : ["feature selection", "data cleaning"],
         "dataset" : "irisdataset",
