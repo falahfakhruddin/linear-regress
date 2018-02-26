@@ -29,9 +29,17 @@ def prediction(dataset, str_prepro, str_algo):
     return prediction
    
 if __name__ == "__main__":
-    dataset = "irisdataset"
-    algorithm = SklearnNeuralNet()
-    preprocessing = [FeatureSelection(), DataCleaning2()]
+    
+    post = json.dumps({ 
+        "preprocessing" : ["feature selection", "data cleaning"],
+        "dataset" : "irisdataset",
+        "algorithm" : "neural network"
+        })
+
+    requestjson = json.loads(post)
+    dataset = requestjson['dataset']
+    preprocessing = trans.preprocessing_trans(requestjson['preprocessing'])
+    algorithm = trans.algorithm_trans(requestjson['algorithm'])
     ml=MLtest(dataset, preprocessing, algorithm)
     prediction = ml.prediction_step()
-    print (prediction)
+    print(prediction)

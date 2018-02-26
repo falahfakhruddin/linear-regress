@@ -3,7 +3,7 @@ raryVIM
 *.swp
 # python compiled file
 *.pyc
-
+*.swn
 
 # temp editing files
 *.swap
