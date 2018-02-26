@@ -68,4 +68,4 @@ def predicting():
     algorithm = data['algorithm']
     dataset = data['dataset']
     predict = main.prediction(dataset, preprocessing, algorithm)
-    return json.dumps({'prediction' : predict})
+    return json.dumps(data)
