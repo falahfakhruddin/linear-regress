@@ -101,11 +101,13 @@ if __name__ == "__main__":
 
     # extract value from
     connect('MLdb')
-    temp = SaveModel.objects(dataset="irisdataset")
+    temp = SaveModel.objects(dataset="homeprice_FeatureSelection_DataCleaning2")
     for data in temp:
-        print(data.model)
+        prepo_dict =data.preprocessing
+    value = prepo_dict["DataCleaning2"]
 
-
+    value2 = [data.preprocessing["DataCleaning2"] for data in temp]
+    model2 = [data.model for data in SaveModel.objects(algorithm="LogisticRegression")]
 
     post2 = LinkPoster(title='MongoEngine Documentation', author=ross)
     post2.link_url = 'http://docs.mongoengine.com/'

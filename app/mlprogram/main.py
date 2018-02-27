@@ -1,5 +1,5 @@
 import json
-from app.mlprogram.MLrunner import *
+from app.mlprogram import MLrunner as run
 from app.mlprogram.preprocessing.FeatureSelection import FeatureSelection
 from app.mlprogram.preprocessing.DataCleaning import DataCleaning2
 from app.mlprogram.algorithm.NaiveBayess import NaiveBayess
@@ -41,6 +41,7 @@ def run():
     dataset = requestjson['dataset']
     preprocessing = trans.preprocessing_trans(requestjson['preprocessing'])
     algorithm = trans.algorithm_trans(requestjson['algorithm'])
-    ml=MLtest(dataset, preprocessing, algorithm)
+    print (preprocessing)
+    ml=run.MLtest(dataset, preprocessing, algorithm)
     prediction = ml.prediction_step()
-    print(prediction)
+    #print(prediction)
