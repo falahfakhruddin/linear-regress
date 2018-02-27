@@ -9,6 +9,8 @@ raryVIM
 *.swap
 *.swp
 *.swo
+*.swk
+*.swm
 
 # env dir
 venv
