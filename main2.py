@@ -29,8 +29,7 @@ def prediction(dataset, str_prepro, str_algo):
     prediction = ml.prediction_step()
     return prediction
 
-#if __name__ == "__main__":
-def run():
+if __name__ == "__main__":
     post = json.dumps({ 
         "preprocessing" : ["feature selection", "data cleaning"],
         "dataset" : "irisdataset",
