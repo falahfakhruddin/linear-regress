@@ -2,6 +2,7 @@ import pandas as pd
 from mongoengine import *
 import numpy as np
 import logging
+import sys
 from datetime import date
 from app.mlprogram.DatabaseConnector import *
 from app.mlprogram import tools as tl
@@ -12,6 +13,8 @@ from app.mlprogram.algorithm.NaiveBayess import NaiveBayess
 from app.mlprogram.preprocessing.DataCleaning import DataCleaning2
 from app.mlprogram.preprocessing.Normalization import Normalization
 from app.mlprogram.preprocessing.FeatureSelection import FeatureSelection
+
+logging.basicConfig(stream=sys.stdout,level= logging.DEBUG)
 
 class MLtrain():
     def __init__(self, dataset, label, type, algorithm, preprocessing, dummies, database):
@@ -99,33 +102,30 @@ class MLtest():
         # get db
         db = DatabaseConnector()
         df = db.get_collection(self.dataset , database='MLdb')
-        logging.debug(df)
-
+        print (df)
         for item in self.preprocessing:
             prepro_name = item.__class__.__name__
-            logging.debug(prepro_name)
             connect('MLdb')
-            logging.debug(self.dataset)
             temp = SaveModel.objects(dataset=self.dataset)
             for data in temp:
                 tes = data.preprocessing
                 logging.debug(tes)
 
             values = [data.preprocessing[prepro_name] for data in SaveModel.objects(dataset=self.dataset)]
-            logging.debug(values)
+            logging.info("query mongoengine: " + str(values))
             df = item.transform(df, values=values[-1])
 
         return df
 
     def prediction_step(self):
-        logging.debug(self.dataset)
-        logging.debug(self.preprocessing)
-        logging.debug(self.algorithm)
+        logging.info("self.dataset :" + str(self.dataset))
+        logging.info("self.preprocessing :" + str(self.preprocessing))
+        logging.info("self.algorithm :" + str(self.algorithm))
 
         for item in self.preprocessing:
             self.dataset = self.dataset + "_" + item.__class__.__name__
-            logging.debug(item.__class__.__name__)
-            logging.debug(self.dataset)
+            logging.info("prepo name :" + str(item.__class__.__name__))
+            logging.info("new datasetname :" + str(self.dataset))
 
         df = self.implement_preprocessing()
 
@@ -136,9 +136,7 @@ class MLtest():
         ml = self.algorithm
 
         prediction = ml.predict(df=df, model=model[-1], dummies=dummies[-1])
-        print ("ASELOELAAA")
         return prediction
-
 
 
 if __name__ == "__main__":

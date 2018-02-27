@@ -41,10 +41,10 @@ class SaveModel(db.Document):
     create = db.DateTimeField(default=datetime.datetime.now)
     dummies = db.BooleanField(required=True)
 
-class SavePrepocessing(db.Document):
-    dataset = db.StringField(max_length=100, required=True)
-    preprocessing = db.DictField(max_length=50, required=True)
-    create = db.DateTimeField(default=datetime.datetime.now)
+class SavePrepocessing(Document):
+    dataset = StringField(max_length=100, required=True)
+    preprocessing = DictField(max_length=50, required=True)
+    create = DateTimeField(default=datetime.datetime.now)
 """        
 logout = {
     "topic" : ,
@@ -58,7 +58,7 @@ logout = {
     "is_active" : False
 }
 """
-"""
+
 class User(EmbeddedDocument):
     last_name = StringField(max_length=50)
 
@@ -76,7 +76,7 @@ class ImagePoster(Poster):
 
 class LinkPoster(Poster):
     link_url = StringField()
-""
+
 if __name__ == "__main__":
     ross = User(email='jm@example.com')
     ross.first_name = 'jose'
@@ -130,7 +130,7 @@ if __name__ == "__main__":
 
     post = Poster.objects(tags='mongodb')
     print(post.title)
-"""
+
 # import pickle
 #
 # binary = pickle.dumps(nn)

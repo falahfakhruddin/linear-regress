@@ -1,5 +1,5 @@
 import json
-from app.mlprogram import MLrunner as run
+from app.mlprogram.MLrunner import *
 from app.mlprogram.preprocessing.FeatureSelection import FeatureSelection
 from app.mlprogram.preprocessing.DataCleaning import DataCleaning2
 from app.mlprogram.algorithm.NaiveBayess import NaiveBayess
@@ -17,7 +17,7 @@ def training():
     database = 'MLdb'
     algorithm = LogisticRegression()
     preprocessing = [FeatureSelection(), DataCleaning2()]
-    ml = MLtrain(dataset, target, method, algorithm, preprocessing, dummies, database)
+    ml = run.MLtrain(dataset, target, method, algorithm, preprocessing, dummies, database)
     listWeights = ml.training_step()
     return listWeights
 
