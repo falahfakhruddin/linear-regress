@@ -12,29 +12,13 @@ from mongoengine import *
 
 
 class DatabaseConnector():
-    def get_collection(self, datafile, label, type='classification', database='newdb', dummies='no'):  # get dataframe
+    def get_collection(self, datafile='irisdataset', database='newdb'):  # get dataframe
         client = MongoClient()
         db = client[database]
         collection = db[datafile].find()
         df = pd.DataFrame(list(collection))
         del df['_id']
-
-        if type == 'classification':
-            target = df[label].values.astype(str)
-        elif type == 'regression':
-            target = df[label].values.astype(float)
-        del df[label]
-
-        if dummies == 'yes':
-            features = pd.get_dummies(df)
-            header = list(features)
-            features = features.values
-
-        else:
-            header = list(df)
-            features = df.iloc[:, :].values
-
-        return features, target, header,
+        return df
 
     def export_collection(self, jsonfile, collection, database='newdb'):  # upload json file into database
         client = MongoClient()
@@ -42,13 +26,24 @@ class DatabaseConnector():
         upload = db[collection]
         return upload.insert_many(jsonfile).inserted_ids
 
+    def check_collection(self, database="newdb"):
+        client = MongoClient()
+        db = client[database]
+        collection = db.collection_names(include_system_collections=False)
+        return collection
+
 class SaveModel(Document):
     dataset = StringField(max_length=100, required=True)
     algorithm = StringField(max_length=100, required=True)
-    preprocessing = ListField(max_length=50, required=True)
+    preprocessing = DictField(max_length=50, required=True)
     model = ListField(max_length=50, required=True)
     create = DateTimeField(default=datetime.datetime.now)
+    dummies = BooleanField(required=True)
 
+class SavePrepocessing(Document):
+    dataset = StringField(max_length=100, required=True)
+    preprocessing = DictField(max_length=50, required=True)
+    create = DateTimeField(default=datetime.datetime.now)
 """        
 logout = {
     "topic" : ,
@@ -105,9 +100,12 @@ if __name__ == "__main__":
     post1.save()
 
     # extract value from
-    temp = Poster.objects(author__first_name="John")
+    connect('MLdb')
+    temp = SaveModel.objects(dataset="irisdataset")
     for data in temp:
-        print(data.author.email)
+        print(data.model)
+
+
 
     post2 = LinkPoster(title='MongoEngine Documentation', author=ross)
     post2.link_url = 'http://docs.mongoengine.com/'
@@ -136,3 +134,10 @@ if __name__ == "__main__":
 # export_file = {"Model": binary}
 # binary_list = list()
 # binary_list.append(binary)
+
+# client = MongoClient()
+# db = client['rawdb']
+# collection = db['playtennis'].find()
+# df = pd.DataFrame(list(collection))
+# del df['_id']
+

@@ -7,8 +7,8 @@ Created on Wed Dec 27 10:14:33 2017
 import numpy as np
 import numpy.ma as ma
 from Abstraction import AbstractPreprocessing
-from scipy import stats            
-            
+from scipy import stats
+from random import randint
 
 class DataCleaning(AbstractPreprocessing):
       def __init__ (self, missingValues = "NaN", strategy = "mode", axis = 0):
@@ -81,20 +81,44 @@ if __name__ == "__main__":
       dc.fit(ab)
       ab = dc.transform(ab)
 
-      from scipy.stats import mode
-      mode(maskedX)
-      newMosfFrequent = np.append(mostFrequent, [1])
+class DataCleaning2(AbstractPreprocessing):
+    def __init__(self, style='mode'):
+        self.style = style
 
-      from itertools import groupby as g
+    def median(self , newdf):
+        median_values = dict()
+        for head in list(newdf):
+            median = newdf[head].median()
+            median_values[head] = median
+        return median_values
 
+    def mean(self , newdf):
+        mean_values = dict()
+        for head in list(newdf):
+            mean = newdf[head].mean()
+            mean_values[head] = mean
+        return mean_values
 
-      def most_common_oneliner(L):
-          return max(g(sorted(L)) , key=lambda x, v: (len(list(v)), -L.index(x)))[0]
+    def mode(self, newdf):
+        mode_values = dict()
+        for head in list(newdf):
+            mode = newdf[head].mode()
+            mode2 = mode[randint(0,len(mode)-1)]
+            mode_values[head] = mode2
+        return mode_values
 
-      z = most_common_oneliner(df)
+    def fit(self, newdf):
+        if self.style == 'mode':
+            values = self.mode(newdf)
+        elif self.style == 'mean':
+            values = self.mean(newdf)
+        elif self.style == 'median':
+            values = self.median(newdf)
 
+        return values
 
-      def most_common(lst):
-          return max(set(lst) , key=lst.count)
-      df2 = df.tolist()
-      result = most_common(df2)
+    def transform(self, newdf, values=None):
+        if values == None:
+            values = self.fit(newdf)
+        newdf = newdf.fillna(value=values)
+        return newdf

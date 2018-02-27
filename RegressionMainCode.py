@@ -10,6 +10,7 @@ from DatabaseConnector import DatabaseConnector
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import tools as tl
 
 
 class MultiVariateRegression(AbstractML):
@@ -18,8 +19,14 @@ class MultiVariateRegression(AbstractML):
             self.learningRate = learningRate
             self.intercept = addIntercept
 
-      def training(self, features, target):
-          listWeights = list()
+      def training(self, features=None, target=None, df=None, label=None, type=None, dummies=None):
+          if df is not None:
+              list_df = tl.dataframe_extraction(df=df, label=label, type=type, dummies=dummies)
+              features = list_df[0]
+              target = list_df[1]
+              self.header = list_df[2]
+
+          model = list()
 
           if self.intercept:
               intercept = np.ones((features.shape[0], 1))
@@ -46,24 +53,44 @@ class MultiVariateRegression(AbstractML):
           plt.xlabel("Iteration")
           plt.show()
 
-          listWeights.append(self.weights)
+          model.append(self.weights)
+          if df is not None:
+              model.append(self.header)
 
-          return listWeights
+          return model
 
-      def predict(self, features, listWeights=None):
-          if listWeights != None:
-              newWeights = listWeights[0]
-              self.weights = newWeights
+      def predict(self, features=None, df=None, model=None, dummies=None):
+          if model is not None:
+              self.weights = model[0]
+              self.header = model[1]
 
-          prediction = np.dot(np.hstack((np.ones((features.shape[0], 1)),
-                                 features)), self.weights)
+          if df is not None:
+              if dummies:
+                  df = pd.get_dummies(df)
+
+              for key in self.header:
+                  if key not in list(df):
+                      df[key] = pd.Series(np.zeros((len(df)),dtype=int))
+
+              features = list()
+              for key in self.header:
+                  for key2 in list(df):
+                      if key == key2:
+                          features.append(df[key])
+              features = np.array(features).T
+
+          if self.intercept:
+              intercept = np.ones((features.shape[0] , 1))
+              features = np.hstack((intercept , features))
+
+          prediction = np.dot(features, self.weights)
           print("\nPredictions :")
           print(prediction)
           return prediction
 
-      def testing(self, features, target, listWeights=None):
+      def testing(self, features, target, model=None):
           #getprediction
-          prediction = self.predict(features, listWeights)
+          prediction = self.predict(features, model=model)
 
           #calculate error
           error = np.sum(abs(prediction - target))
@@ -71,29 +98,27 @@ class MultiVariateRegression(AbstractML):
           return error
 
 if __name__ == "__main__":
-    temp=sys.argv
-    #extract data from txt file into array
-    db = DatabaseConnector()
-    list_db = db.get_collection("homeprice", "Price", type="regression")
-    df = list_db[0]
-    target = list_db[1]
-    header = list(df)
-    bias = ['bias']
-    header = bias + header
 
-    # extract feature
-    features = np.array(df)
+    datafile = "homeprice"
+    label = "Price"
+    type = "regression"
+    dummies = False
+
+    # Load data and Preperation Data
+    db = DatabaseConnector()
+    df = db.get_collection(datafile)
 
     #training phase
     step = 10000
-    multipleReg = MultiVariateRegression()
-    weights = multipleReg.training(features, target)
+    multipleReg = MultiVariateRegression(addIntercept=True)
+    model = multipleReg.training(df=df, label=label, type=type, dummies=dummies)
 
-    print ("Weights :")
-    print (weights)
+    #predict
+    prediction= multipleReg.predict(df=df, model=model, dummies=dummies)
 
+"""
     #testing method
     error = multipleReg.testing(features, target)
     print ("\nError : %f" %error )
-
+"""
 
