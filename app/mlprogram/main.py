@@ -30,10 +30,11 @@ def prediction(dataset, str_prepro, str_algo):
     return prediction
 
 if __name__ == "__main__":
-    post = json.dumps({	"preprocessing" : ["feature selection", "data cleaning"],
-                           "dataset" : "irisdataset",
-                           "algorithm" : "neural network"
-                           })
+    post = json.dumps({ 
+        "preprocessing" : ["feature selection", "data cleaning"],
+        "dataset" : "irisdataset",
+        "algorithm" : "neural network"
+        })
 
     requestjson = json.loads(post)
     dataset = requestjson['dataset']
