@@ -1,6 +1,7 @@
 import pandas as pd
 from mongoengine import *
 import numpy as np
+import logging
 from datetime import date
 from app.mlprogram.DatabaseConnector import *
 from app.mlprogram import tools as tl
@@ -11,7 +12,6 @@ from app.mlprogram.algorithm.NaiveBayess import NaiveBayess
 from app.mlprogram.preprocessing.DataCleaning import DataCleaning2
 from app.mlprogram.preprocessing.Normalization import Normalization
 from app.mlprogram.preprocessing.FeatureSelection import FeatureSelection
-
 
 class MLtrain():
     def __init__(self, dataset, label, type, algorithm, preprocessing, dummies, database):
@@ -75,8 +75,8 @@ class MLtrain():
                 self.dataset, waste = self.dataset.split("_", 1)
                 df = self.preprocessing_step()
 
-        print ("aselole")
-        print(self.prepo_parameter)
+        logging.debug("aselole")
+        logging.debug(self.prepo_parameter)
 
         #training
         ml = self.algorithm
@@ -99,34 +99,44 @@ class MLtest():
         # get db
         db = DatabaseConnector()
         df = db.get_collection(self.dataset , database='MLdb')
+        logging.debug(df)
 
         for item in self.preprocessing:
             prepro_name = item.__class__.__name__
+            logging.debug(prepro_name)
             connect('MLdb')
+            logging.debug(self.dataset)
             temp = SaveModel.objects(dataset=self.dataset)
             for data in temp:
-                prepo_dict = data.preprocessing
-            values = (prepo_dict[prepro_name])
-            df = item.transform(df, values=values)
+                tes = data.preprocessing
+                logging.debug(tes)
+
+            values = [data.preprocessing[prepro_name] for data in SaveModel.objects(dataset=self.dataset)]
+            logging.debug(values)
+            df = item.transform(df, values=values[-1])
 
         return df
 
     def prediction_step(self):
+        logging.debug(self.dataset)
+        logging.debug(self.preprocessing)
+        logging.debug(self.algorithm)
+
         for item in self.preprocessing:
             self.dataset = self.dataset + "_" + item.__class__.__name__
+            logging.debug(item.__class__.__name__)
+            logging.debug(self.dataset)
 
         df = self.implement_preprocessing()
-        print(df)
 
         connect('MLdb')
         temp = SaveModel.objects(algorithm=self.algorithm.__class__.__name__)
-        for data in temp:
-            model = data.model
-            dummies = data.dummies
-
+        model = [data.model for data in temp]
+        dummies = [data.dummies for data in temp]
         ml = self.algorithm
-        prediction = ml.predict(df=df, model=model, dummies=dummies)
 
+        prediction = ml.predict(df=df, model=model[-1], dummies=dummies[-1])
+        print ("ASELOELAAA")
         return prediction
 
 
