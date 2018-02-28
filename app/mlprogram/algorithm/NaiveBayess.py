@@ -5,12 +5,12 @@ from ..DatabaseConnector import DatabaseConnector
 from app.mlprogram import tools as tl
 
 class NaiveBayess(AbstractML):
-    def __init__(self, header=None):
-        self.header=header
+    def __init__(self):
         self.weightDict = {}
         self.labelCounts = collections.defaultdict(lambda: 0)
 
-    def training(self, features=None, target=None, df=None, label=None, type=None, dummies=False):
+    def training(self, features=None, target=None, header=None, df=None, label=None, type=None, dummies=False):
+        self.header=header
         #extract value of dataframe
         if df is not None:
             list_df = tl.dataframe_extraction(df=df , label=label , type=type )

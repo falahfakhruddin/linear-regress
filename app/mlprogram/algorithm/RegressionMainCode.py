@@ -19,7 +19,8 @@ class MultiVariateRegression(AbstractML):
             self.learningRate = learningRate
             self.intercept = addIntercept
 
-      def training(self, features=None, target=None, df=None, label=None, type=None, dummies=None):
+      def training(self, features=None, target=None, header=None, df=None, label=None, type=None, dummies=None):
+          self.header=header
           if df is not None:
               list_df = tl.dataframe_extraction(df=df, label=label, type=type, dummies=dummies)
               features = list_df[0]

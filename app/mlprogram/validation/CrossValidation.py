@@ -10,12 +10,12 @@ import numpy as np
 import random
 import math
 import pandas as pd
-from LogisticRegression import LogisticRegression
-from RegressionMainCode import MultiVariateRegression
-from DatabaseConnector import DatabaseConnector
-from NaiveBayess import NaiveBayess
-from MLPClassifier import SklearnNeuralNet
-import tools as tl
+from app.mlprogram.algorithm.LogisticRegression import LogisticRegression
+from app.mlprogram.algorithm.RegressionMainCode import MultiVariateRegression
+from app.mlprogram.algorithm.NaiveBayess import NaiveBayess
+from app.mlprogram.algorithm.MLPClassifier import SklearnNeuralNet
+from app.mlprogram.DatabaseConnector import *
+from app.mlprogram import tools as tl
 
 def partition(features, target, k):
     size = math.ceil(len(features) / float(k))
@@ -44,7 +44,7 @@ def assign(partition_feature, size, k):
     return x
 
 
-def kfoldcv(classifier, features, target, k):
+def kfoldcv(classifier, features, target, header, k):
     target = target.reshape(len(target), 1)
     partition_feature, partition_target = partition(features, target, k)
     errors = list()
@@ -72,15 +72,15 @@ def kfoldcv(classifier, features, target, k):
 
         # Train and classify model
         algorithm = classifier
-        trained_classifier = train(algorithm, training_set)
+        trained_classifier = train(algorithm, training_set, header)
         errors.append(testing(algorithm, test_set))
 
     return errors
 
-def train(classifier, training_set):
+def train(classifier, training_set, header):
     feature = training_set[0]
     target = training_set[1]
-    return classifier.training(feature, target)
+    return classifier.training(feature, target, header)
 
 def testing(classifier, test_set):
     feature = test_set[0]

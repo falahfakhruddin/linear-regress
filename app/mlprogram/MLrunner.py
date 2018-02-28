@@ -93,24 +93,21 @@ class MLtrain():
         return model
 
 class MLtest():
-    def __init__(self, dataset, preprocessing, algorithm):
+    def __init__(self, dataset, preprocessing, algorithm, instance):
         self.dataset = dataset
         self.preprocessing = preprocessing
         self.algorithm = algorithm
+        self.instance = instance
 
     def implement_preprocessing(self):
         # get db
         db = DatabaseConnector()
-        df = db.get_collection(self.dataset , database='MLdb')
+        df = pd.DataFrame(self.instance)
         print (df)
         for item in self.preprocessing:
             prepro_name = item.__class__.__name__
             connect('MLdb')
             temp = SaveModel.objects(dataset=self.dataset)
-            for data in temp:
-                tes = data.preprocessing
-                logging.debug(tes)
-
             values = [data.preprocessing[prepro_name] for data in SaveModel.objects(dataset=self.dataset)]
             logging.info("query mongoengine: " + str(values))
             df = item.transform(df, values=values[-1])
@@ -121,6 +118,8 @@ class MLtest():
         logging.info("self.dataset :" + str(self.dataset))
         logging.info("self.preprocessing :" + str(self.preprocessing))
         logging.info("self.algorithm :" + str(self.algorithm))
+        logging.info("self.instance: " +str(self.instance))
+        logging.info("type.instance: " +str(type(self.instance)))
 
         for item in self.preprocessing:
             self.dataset = self.dataset + "_" + item.__class__.__name__
@@ -137,7 +136,6 @@ class MLtest():
 
         prediction = ml.predict(df=df, model=model[-1], dummies=dummies[-1])
         return prediction
-
 
 if __name__ == "__main__":
     dataset = "homeprice"

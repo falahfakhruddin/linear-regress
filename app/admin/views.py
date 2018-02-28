@@ -50,5 +50,18 @@ def predicting():
     preprocessing = data['preprocessing']
     algorithm = data['algorithm']
     dataset = data['dataset']
-    predict = main.prediction(dataset, preprocessing, algorithm)
+    instance = data['instance']
+    predict = main.prediction(dataset, preprocessing, algorithm, instance)
     return json.dumps({'prediction' : predict})
+
+@admin.route('/evaluate', methods = ['POST'])
+def validation():
+    data = request.get_json()
+    dataset = data['dataset']
+    algorithm = data['algorithm']
+    target = data['target']
+    method = data['method']
+    dummies = data['dummies']
+    fold = data['fold']
+    mean_error = main.evaluate(dataset, algorithm, target, method, dummies, fold)
+    return json.dumps({'errors' : mean_error})

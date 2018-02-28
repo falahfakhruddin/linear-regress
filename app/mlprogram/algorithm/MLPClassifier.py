@@ -11,7 +11,8 @@ class SklearnNeuralNet(AbstractML):
     def __init__(self,size=10, solver='sgd', learning_rate=0.01, max_iter=5000):
         self.mlp = MLPClassifier(hidden_layer_sizes=size, solver=solver, learning_rate_init=learning_rate, max_iter=max_iter)
 
-    def training(self, features=None, target=None, df=None, label=None, type=None, dummies=None):
+    def training(self, features=None, target=None, header=None, df=None, label=None, type=None, dummies=None):
+        self.header=header
         if df is not None:
             list_df = tl.dataframe_extraction(df=df , label=label , type=type, dummies=dummies)
             features = list_df[0]
@@ -22,9 +23,7 @@ class SklearnNeuralNet(AbstractML):
         self.mlp.fit(features, target)
         binary_mlp = pickle.dumps(self.mlp)
         model.append(binary_mlp)
-
-        if df is not None:
-            model.append(self.header)
+        model.append(self.header)
 
         return model
 

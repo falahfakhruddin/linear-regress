@@ -1,4 +1,5 @@
 import json
+from app.mlprogram.validation import CrossValidation as cv
 from app.mlprogram.MLrunner import *
 from app.mlprogram.preprocessing.FeatureSelection import FeatureSelection
 from app.mlprogram.preprocessing.DataCleaning import DataCleaning2
@@ -21,27 +22,23 @@ def training():
     listWeights = ml.training_step()
     return listWeights
 
-def prediction(dataset, str_prepro, str_algo):
+def prediction(dataset, str_prepro, str_algo, instance):
     # testing step
     preprocessing = trans.preprocessing_trans(str_prepro)
     algorithm = trans.algorithm_trans(str_algo)
-    ml = MLtest(dataset, preprocessing, algorithm)
+    ml = MLtest(dataset, preprocessing, algorithm, instance)
     prediction = ml.prediction_step()
     return prediction
 
-#if __name__ == "__main__":
-def run():
-    post = json.dumps({ 
-        "preprocessing" : ["feature selection", "data cleaning"],
-        "dataset" : "irisdataset",
-        "algorithm" : "neural network"
-        })
+def evaluate(dataset, str_algo, label, method, dummies, fold):
+    algorithm = trans.algorithm_trans(str_algo)    
+    db = DatabaseConnector()
+    df=db.get_collection(dataset)
+    list_df = tl.dataframe_extraction(df, label, method, dummies)
+    features = list_df[0]
+    target = list_df[1]
+    header = list_df[2]
+    errors = cv.kfoldcv(algorithm, features, target, header, fold)
+    mean = sum(errors)/fold
+    return mean
 
-    requestjson = json.loads(post)
-    dataset = requestjson['dataset']
-    preprocessing = trans.preprocessing_trans(requestjson['preprocessing'])
-    algorithm = trans.algorithm_trans(requestjson['algorithm'])
-    print (preprocessing)
-    ml=run.MLtest(dataset, preprocessing, algorithm)
-    prediction = ml.prediction_step()
-    #print(prediction)

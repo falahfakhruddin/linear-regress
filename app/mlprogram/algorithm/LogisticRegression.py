@@ -20,7 +20,8 @@ class LogisticRegression (AbstractML):
       def sigmoid(self, scores):
           return 1 / (1 + np.exp(-scores))
 
-      def training(self, features=None, target=None, df=None, label=None, type=None, dummies=None):
+      def training(self, features=None, target=None, header=None, df=None, label=None, type=None, dummies=None):
+          self.header=header
           #extracting value of dataframe
           if df is not None:
               list_df = tl.dataframe_extraction(df=df, label=label, type=type, dummies=dummies)
@@ -61,8 +62,7 @@ class LogisticRegression (AbstractML):
 
           model.append(self.listWeights)
           model.append(self.uniqueTarget)
-          if df is not None:
-              model.append(self.header)
+          model.append(self.header)
 
           return model
 
