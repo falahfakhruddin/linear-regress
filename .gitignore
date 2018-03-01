@@ -1,7 +1,7 @@
-# python compiled file
+#python compiled file
 *.pyc
 *.swn
-
+ 
 # temp editing files
 *.swap
 *.swp
@@ -9,16 +9,16 @@
 *.swk
 *.swm
 *.sw*
-
+  
 # env dir
 venv
-
+   
 # info
 *.*-info
-
+    
 # build
 build
-
+     
 # distribution files
 dist
 *.egg
