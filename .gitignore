@@ -1,31 +1,29 @@
-
-raryVIM
-*.swp
-# python compiled file
+#python compiled file
 *.pyc
 *.swn
-
+ 
 # temp editing files
 *.swap
 *.swp
 *.swo
 *.swk
 *.swm
-
+*.sw*
+  
 # env dir
 venv
-
+   
 # info
 *.*-info
-
+    
 # build
 build
-
+     
 # distribution files
 dist
 *.egg
 
 # intellij idea project directory
 .idea/*
-
 __pyache__/*
+
