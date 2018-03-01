@@ -8,6 +8,7 @@
 *.swap
 *.swp
 *.swo
+*.sw*
   
 # env dir
 venv
