@@ -25,5 +25,5 @@ dist
 
 # intellij idea project directory
 .idea/*
-__pyache__/*
 
+__pyache__/*
