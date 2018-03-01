@@ -1,13 +1,27 @@
+<<<<<<< HEAD
 #filetemporaryVIM
 *.swp
 # python compiled file
 *.pyc
 
+=======
+
+raryVIM
+*.swp
+# python compiled file
+*.pyc
+*.swn
+>>>>>>> 076aa201e8dc5cec78140692c76666fe0dcfc54d
 
 # temp editing files
 *.swap
 *.swp
 *.swo
+<<<<<<< HEAD
+=======
+*.swk
+*.swm
+>>>>>>> 076aa201e8dc5cec78140692c76666fe0dcfc54d
 
 # env dir
 venv
