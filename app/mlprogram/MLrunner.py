@@ -55,12 +55,11 @@ class MLtrain():
         return df
 
     def training_step(self):
-
+        df = None
         if self.database == "rawdb":
             df = self.preprocessing_step()
-
+       
         elif self.database == "MLdb":
-
             for item in self.preprocessing:
                 self.dataset = self.dataset + "_" + item.__class__.__name__
 
@@ -78,11 +77,13 @@ class MLtrain():
                 self.dataset, waste = self.dataset.split("_", 1)
                 df = self.preprocessing_step()
 
-        logging.debug("aselole")
-        logging.debug(self.prepo_parameter)
+        logging.debug(str(self.label))
 
         #training
         ml = self.algorithm
+        logging.debug(str(self.algorithm))
+        logging.debug(str(df))
+        logging.debug(str(self.preprocessing))
         model = ml.training(df=df,label=self.label,type=self.type,dummies=self.dummies)
 
         #savedb
@@ -90,7 +91,7 @@ class MLtrain():
         savedb = SaveModel(dataset=self.dataset, algorithm= self.algorithm.__class__.__name__,
                            preprocessing=self.prepo_parameter, model=model, dummies=self.dummies)
         savedb.save()
-        return model
+        return "succes"
 
 class MLtest():
     def __init__(self, dataset, preprocessing, algorithm, instance):

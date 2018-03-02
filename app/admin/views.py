@@ -48,15 +48,16 @@ def validation():
 
 @admin.route('/training', methods=['POST'])
 def training():
-    data = request.getjson()
+    data = request.get_json()
     dataset = data['dataset']
     target = data['target']
     algorithm = data['algorithm']
     preprocessing = data['preprocessing']
+    method = data['method']
     dummies = data['dummies']
     database = data['database']
-    train_result = main.training(dataset, target, algorithm, preprocesing, dummies, database)
-    return json.dumps(train_result)
+    train_result = main.training(dataset, target, algorithm, preprocessing, method, dummies, database)
+    return json.dumps({"massage" : train_result})
 
 @admin.route('/model')
 def model():

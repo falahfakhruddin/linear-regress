@@ -9,19 +9,13 @@ from app.mlprogram.algorithm.MLPClassifier import SklearnNeuralNet
 from app.mlprogram.algorithm.LogisticRegression import LogisticRegression
 from app.mlprogram import translator as trans
 
-
-def training():
+def training(dataset, target, str_algo, str_prepro, method, dummies, database):
     # training step
-    dataset = "irisdataset"
-    target = "species"
-    method = "classification"
-    dummies = False
-    database = 'MLdb'
-    algorithm = LogisticRegression()
-    preprocessing = [FeatureSelection(), DataCleaning2()]
-    ml = run.MLtrain(dataset, target, method, algorithm, preprocessing, dummies, database)
-    listWeights = ml.training_step()
-    return listWeights
+    algorithm = trans.algorithm_trans(str_algo)
+    preprocessing = trans.preprocessing_trans(str_prepro)
+    ml = MLtrain(dataset, target, method, algorithm, preprocessing, dummies, database)
+    massage = ml.training_step()
+    return massage
 
 def prediction(dataset, str_prepro, str_algo, instance):
     # testing step
