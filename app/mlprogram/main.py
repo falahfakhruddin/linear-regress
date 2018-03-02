@@ -9,6 +9,7 @@ from app.mlprogram.algorithm.MLPClassifier import SklearnNeuralNet
 from app.mlprogram.algorithm.LogisticRegression import LogisticRegression
 from app.mlprogram import translator as trans
 
+
 def training():
     # training step
     dataset = "irisdataset"
@@ -42,3 +43,10 @@ def evaluate(dataset, str_algo, label, method, dummies, fold):
     mean = sum(errors)/fold
     return mean
 
+def model_query():
+    def del_id(data):
+        del data['_id']
+        del data['create']
+        return data
+    data = [del_id(temp.to_mongo()) for temp in SaveModel.objects()]
+    return data

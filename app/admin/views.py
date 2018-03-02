@@ -1,32 +1,12 @@
 from . import admin
 from app.mlprogram import main
 from flask import request, render_template, redirect, url_for, flash
+from app.mlprogram.DatabaseConnector import *
 import json
 
 @admin.route('/')
 def root():
     return 'hello world'
-
-@admin.route('/playtennis', methods=['GET', 'POST'])
-def input_field():
-    if request.method == 'POST':
-        field = request.form['Field']
-        value = request.form['Value']
-        return redirect(url_for('show_list', field=field, feature=value)) 
-    return render_template('playtennis.html')
-
-@admin.route('/playtennis/<string:field>/<string:feature>')
-def show_list(field, feature):
-    def del_id(data) : 
-        del data['_id']
-        return data
-    data = [del_id(temp.to_mongo()) for temp in Playtennis.objects(**{'{}'.format(field) : feature})]
-    admin.logger.info(data)
-    return json.dumps(list(data))
-
-@admin.route('/playtennis/add', methods=['GET'])
-def playtennis_add_frm():
-    return render_template('add_form.html')
 
 @admin.route('/api/playtennis', methods=['POST'])
 def playtennis_insert():
@@ -65,3 +45,20 @@ def validation():
     fold = data['fold']
     mean_error = main.evaluate(dataset, algorithm, target, method, dummies, fold)
     return json.dumps({'errors' : mean_error})
+
+@admin.route('/training', methods=['POST'])
+def training():
+    data = request.getjson()
+    dataset = data['dataset']
+    target = data['target']
+    algorithm = data['algorithm']
+    preprocessing = data['preprocessing']
+    dummies = data['dummies']
+    database = data['database']
+    train_result = main.training(dataset, target, algorithm, preprocesing, dummies, database)
+    return json.dumps(train_result)
+
+@admin.route('/model')
+def model():
+    data = main.model_query()
+    return json.dumps(list(data))
