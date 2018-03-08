@@ -1,13 +1,15 @@
-#filetemporaryVIM
+raryVIM
 *.swp
 # python compiled file
 *.pyc
-
+*.swn
 
 # temp editing files
 *.swap
 *.swp
 *.swo
+*.swk
+*.swm
 
 # env dir
 venv
