@@ -23,5 +23,5 @@ dist
 
 # intellij idea project directory
 .idea/*
-
+inspection/*
 __pyache__/*
