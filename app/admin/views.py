@@ -16,8 +16,6 @@ def input_field():
         return redirect(url_for('show_list', field=field, feature=value)) 
     return render_template('playtennis.html')
   
-#adding new line
-
 @admin.route('/playtennis/<string:field>/<string:feature>')
 def show_list(field, feature):
     def del_id(data) : 
