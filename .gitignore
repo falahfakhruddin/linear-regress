@@ -4,7 +4,6 @@ raryVIM
 *.pyc
 *.swn
 
-# temp editing files
 *.swap
 *.swp
 *.swo
