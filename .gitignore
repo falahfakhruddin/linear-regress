@@ -3,13 +3,11 @@
 #python compiled file
 *.pyc
 
- 
 # temp editing files
 *.swap
-*.swp
 *.swo
 *.sw*
-  
+
 # env dir
 venv
    
