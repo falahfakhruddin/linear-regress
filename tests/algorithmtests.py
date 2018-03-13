@@ -1,30 +1,27 @@
 import unittest
 import numpy as np
-from ..algorithm.LogisticRegression import LogisticRegression
-from ..algorithm.MLPClassifier import MLPClassifier
-from ..algorithm.NaiveBayess import NaiveBayess
-from ..algorithm.RegressionMainCode import MultiVariateRegression
+from app.mlprogram.algorithm.LogisticRegression import LogisticRegression
+from app.mlprogram.algorithm.MLPClassifier import MLPClassifier
+from app.mlprogram.algorithm.NaiveBayess import NaiveBayess
+from app.mlprogram.algorithm.RegressionMainCode import MultiVariateRegression
 
-class AlgorithmTests(unittest.TestCase):
-    def test_multiplication(self):
-        temp = 4
-        result = 2*2
-        self.assertEqual(result, temp)
-    
-    def test_divided(self):
-        temp = 2
-        result = 5/2
-        self.assertEqual(result, temp)
+class TestLogisticRegression(unittest.TestCase):
+    def setUp(self):
+        self.vector = np.arange(10)
+        self.value = 1/(1+np.exp(-self.vector))
+
+    def tearDown(self):
+        pass
+
+    def test_sigmoid(self):
+        log = LogisticRegression()
+        result = log.sigmoid(self.vector)
+        self.assertEqual(result.tolist(), self.value.tolist())
     
     def test_sum(self):
         temp = 3
         result = 2+1
         self.assertEqual(result, temp)
 
-    def sigmoid_logistic_regression(self):
-        
-        temp = 1/(1+np.exp(-scores))
-        logreg = LogisticRegression()
-        result = logreg.sigmoid
 if __name__ == "__main__":
     unittest.main()
