@@ -1,11 +1,8 @@
 import unittest
 import numpy as np
 from app.mlprogram.algorithm.LogisticRegression import LogisticRegression
-from app.mlprogram.algorithm.MLPClassifier import MLPClassifier
-from app.mlprogram.algorithm.NaiveBayess import NaiveBayess
-from app.mlprogram.algorithm.RegressionMainCode import MultiVariateRegression
 
-class TestLogisticRegression(unittest.TestCase):
+class LogisticRegressionTest(unittest.TestCase):
     def setUp(self):
         self.vector = np.arange(10)
         self.value = 1/(1+np.exp(-self.vector))
