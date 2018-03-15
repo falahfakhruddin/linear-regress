@@ -18,7 +18,11 @@ class CrossValidationTest(unittest.TestCase):
                              ['high', 'overcast', 'mild', 'true'],
                              ['normal', 'overcast', 'hot', 'false'],
                              ['high', 'rainy', 'mild', 'true']])
-        
+
+        self.target = np.array(['no', 'no', 'yes', 'yes', 
+                                'yes', 'no', 'yes', 'no', 
+                                'yes', 'yes','yes', 'yes', 
+                                'yes', 'no'])
 
     def tearDown(self):
         pass
@@ -31,8 +35,10 @@ class CrossValidationTest(unittest.TestCase):
         self.assertLessEqual(result, k)
 
     def test_partition(self):
-        result = isinstance(self.features, object)
-        self.assertTrue(result)
+        k = 4
+        target_reshape = self.target.reshape(len(self.target), 1)
+        result = cv.partition(self.features, target_reshape, k)
+        self.assertEqual(len(result[0]), k)
 
 if __name__ == '__main__':
     unittest.main()

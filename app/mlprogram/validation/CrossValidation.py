@@ -85,7 +85,6 @@ def train(classifier, training_set, header):
 def testing(classifier, test_set):
     feature = test_set[0]
     target = test_set[1]
-
     return classifier.testing(feature, target)
 
 
