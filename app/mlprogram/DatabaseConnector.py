@@ -5,7 +5,7 @@ Created on Tue Dec  5 15:14:53 2017
 @author: falah.fakhruddin
 """
 
-from pymongo import MongoClient
+import pymongo
 import pandas as pd
 import datetime
 from .. import db
@@ -13,23 +13,28 @@ from .. import db
 
 
 class DatabaseConnector():
+    def __init__(self, server='localhost'):
+        self.client = pymongo.MongoClient(server)
+
     def get_collection(self, datafile='irisdataset', database='newdb'):  # get dataframe
-        client = MongoClient()
-        db = client[database]
+        db = self.client[database]
         collection = db[datafile].find()
         df = pd.DataFrame(list(collection))
         del df['_id']
         return df
 
     def export_collection(self, jsonfile, collection, database='newdb'):  # upload json file into database
-        client = MongoClient()
-        db = client[database]
-        upload = db[collection]
-        return upload.insert_many(jsonfile).inserted_ids
+        try:
+            db = self.client[database]
+            upload = db[collection]
+            upload.insert_many(jsonfile).inserted_ids
+        except Exception:
+            print("failed to import database")
+            return False
+        return True
 
     def check_collection(self, database="newdb"):
-        client = MongoClient()
-        db = client[database]
+        db = self.client[database]
         collection = db.collection_names(include_system_collections=False)
         return collection
 
