@@ -71,19 +71,10 @@ class DataCleaning(AbstractPreprocessing):
                   filledX = maskedX.filled(self.mostFrequent)
                 
             return filledX
-                
-if __name__ == "__main__":
-      a = np.array([[np.NaN, 2, 3, 4], [0, 3, np.NaN, 2],[1,np.NaN,3,1], [np.NaN,4,3,5],
-                    [2,3,2,np.NaN],[3,np.NaN,4,2],[2,3,4,2],[1,2,4,np.NaN]])
-      b = np.array([[1],[2],[3],[4],[5], [6], [7], [8]])
-      ab = np.append(a, b, axis=1)
-      dc=DataCleaning(strategy="median")
-      dc.fit(ab)
-      ab = dc.transform(ab)
 
 class DataCleaning2(AbstractPreprocessing):
-    def __init__(self, style='mode'):
-        self.style = style
+    def __init__(self, method='mode'):
+        self.method = method
 
     def median(self , newdf):
         median_values = dict()
@@ -108,11 +99,11 @@ class DataCleaning2(AbstractPreprocessing):
         return mode_values
 
     def fit(self, newdf):
-        if self.style == 'mode':
+        if self.method == 'mode':
             values = self.mode(newdf)
-        elif self.style == 'mean':
+        elif self.method == 'mean':
             values = self.mean(newdf)
-        elif self.style == 'median':
+        elif self.method == 'median':
             values = self.median(newdf)
 
         return values
@@ -122,3 +113,14 @@ class DataCleaning2(AbstractPreprocessing):
             values = self.fit(newdf)
         newdf = newdf.fillna(value=values)
         return newdf
+                
+if __name__ == "__main__":
+      a = np.array([[np.NaN, 2, 3, 4], [0, 3, np.NaN, 2],[1,np.NaN,3,1], [np.NaN,4,3,5],
+                    [2,3,2,np.NaN],[3,np.NaN,4,2],[2,3,4,2],[1,2,4,np.NaN]])
+      b = np.array([[1],[2],[3],[4],[5], [6], [7], [8]])
+      ab = np.append(a, b, axis=1)
+      dc=DataCleaning(strategy="median")
+      dc.fit(ab)
+      ab = dc.transform(ab)
+
+
