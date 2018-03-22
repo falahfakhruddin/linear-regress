@@ -24,7 +24,7 @@ def testing():
         return json.dumps({'data' : str(data)})
     return render_template('radio.html')
 
-@admin.route('/api/predict', methods = ['POST'])
+@admin.route('/predict', methods = ['POST'])
 def predicting():
     data = request.get_json()
     preprocessing = data['preprocessing']
