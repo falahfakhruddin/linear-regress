@@ -6,6 +6,7 @@ from app.mlprogram.algorithm.MLPClassifier import SklearnNeuralNet
 from app.mlprogram.algorithm.LogisticRegression import LogisticRegression
 from app.mlprogram.preprocessing.FeatureSelection import FeatureSelection
 from app.mlprogram.preprocessing.DataCleaning import DataCleaning2
+from app.mlprogram.preprocessing.Normalization import Normalization
 
 class TranslatorTest(unittest.TestCase):
     def setUp(self):
@@ -42,8 +43,8 @@ class TranslatorTest(unittest.TestCase):
         self.assertTrue(result)
     
     def test_case5(self):
-        preprocessing_test = [FeatureSelection(), DataCleaning2()]
-        list = ['feature selection', 'data cleaning']
+        preprocessing_test = [FeatureSelection(), DataCleaning2(), Normalization()]
+        list = ['feature selection', 'data cleaning', 'normalization']
         preprocessing = trans.preprocessing_trans(list)
         result = None
         for i in range(len(preprocessing)):    
