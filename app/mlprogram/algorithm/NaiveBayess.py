@@ -55,7 +55,8 @@ class NaiveBayess(AbstractML):
 
         if df is not None:
             target = list(set(list(df)).difference(self.header))
-            del df[target[0]]
+            if len(target) != 0:
+                del df[target[0]]
             features = df.values
 
         prediction = list()

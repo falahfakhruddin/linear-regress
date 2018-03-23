@@ -103,7 +103,6 @@ class LogisticRegression (AbstractML):
                   predict_dictionary[self.uniqueTarget[kind]] = final_scores_list[kind][set]
               prediction.append(max(predict_dictionary, key = lambda classLabel: predict_dictionary[classLabel]))
 
-          prediction = np.array(prediction)
           print("\nPrediction :")
           print (prediction)
           return prediction

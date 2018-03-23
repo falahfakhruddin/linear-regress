@@ -11,10 +11,10 @@ class FeatureSelection(AbstractPreprocessing):
       def __init__(self, percentage = 0.5):
             self.percentage = percentage
 
-      def fit (self, df):
+      def fit (self, df, label):
             return None
 
-      def transform(self, df, values=None):
+      def transform(self, df, label=None, values=None):
             threshold = int((self.percentage * df.shape[1]) + 0.5)  # fit
             return df.dropna(thresh=threshold)
 

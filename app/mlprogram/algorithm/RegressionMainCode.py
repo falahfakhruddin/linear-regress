@@ -87,6 +87,7 @@ class MultiVariateRegression(AbstractML):
           prediction = np.dot(features, self.weights)
           print("\nPredictions :")
           print(prediction)
+          prediction = prediction.tolist()
           return prediction
 
       def testing(self, features, target, model=None):

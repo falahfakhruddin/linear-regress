@@ -30,18 +30,19 @@ class MLtrain():
         #get db
         db = DatabaseConnector()
         df = db.get_collection(self.dataset, database='rawdb')
-        temp_df = df[self.label]
-        del df[self.label]
 
         #preprocessing step
         self.prepo_parameter = dict()
         list_preprocessing = self.preprocessing
         for item in list_preprocessing:
-            value = item.fit(df)
+            logging.debug(str(item))
+            logging.debug(str(df))
+            value = item.fit(df, self.label)
+            logging.debug(str(value))
+            logging.debug(str(df))
             self.prepo_parameter[item.__class__.__name__]=value
-            df = item.transform(df)
+            df = item.transform(df, self.label)
             self.dataset = self.dataset+"_"+item.__class__.__name__
-        df[self.label] = temp_df
 
         #save collection
         strdate = date.today().isoformat()
