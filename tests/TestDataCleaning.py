@@ -16,7 +16,9 @@ class DataCleaningTest(unittest.TestCase):
         dataset3 = np.array([[1.0, 2.0, 3.0, 2.0], [1.0, 3.0, 3.0, 2.0],
                                  [1.0,3.0,3.0,6.0], [2.0,3.0,3.0,2.0]])
         self.df3 = pd.DataFrame(dataset3)
-
+        
+        self.target_data = np.array([[1], [2], [3], [4]])
+        
         self.mode_values  =  { 0 : 1,
                                1 : 3,
                                2 : 3,
@@ -31,26 +33,28 @@ class DataCleaningTest(unittest.TestCase):
                                1 : 3,
                                2 : 3,
                                3 : 4 }
-       
     def tearDown(self):
         pass
 
     def test_fit_case1(self):
         #method mode
+        self.df2['target'] = self.target_data
         dc = DataCleaning2(method='mode')
-        result = dc.fit(self.df2)
+        result = dc.fit(self.df2, label='target')
         self.assertDictEqual(result, self.mode_values)
 
     def test_fit_case2(self):
         #method median
+        self.df['target'] = self.target_data
         dc = DataCleaning2(method='median')
-        result = dc.fit(self.df)
+        result = dc.fit(self.df, label ='target')
         self.assertDictEqual(result, self.median_values)
 
     def test_fit_case3(self):
         #method mean
+        self.df['target'] = self.target_data
         dc = DataCleaning2(method='mean')
-        result=dc.fit(self.df)
+        result=dc.fit(self.df, label='target')
         self.assertDictEqual(result, self.mean_values)
 
     def test_mean(self):
@@ -77,8 +81,10 @@ class DataCleaningTest(unittest.TestCase):
 
     def test_transform_case2(self):
         #values is None
+        self.df2['target'] = self.target_data
+        self.df3['target'] = self.target_data
         dc = DataCleaning2()
-        newdf = dc.transform(self.df2)
+        newdf = dc.transform(self.df2, label='target')
         result = pd.DataFrame.equals(newdf, self.df3)
         self.assertTrue(result)
 
