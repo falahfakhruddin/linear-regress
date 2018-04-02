@@ -1,6 +1,7 @@
 import unittest
 import numpy as np
 import pandas as pd
+from unittest.mock import patch
 from app.mlprogram.algorithm.LogisticRegression import LogisticRegression
 
 class LogisticRegressionTest(unittest.TestCase):
@@ -31,7 +32,11 @@ class LogisticRegressionTest(unittest.TestCase):
         self.header = ['windy', 'outlook', 'humidity', 'outlook', 'play']
         self.label = 'play'
         self.test_list = ['yes', 'no', 'yes', 'no']
-
+        self.model = [[np.array([-0.18724959,  0.84022002, -0.45191971, -0.5755499 , -0.45191971,
+            0.84022002, -0.5755499 ,  0.84022002, -1.02746961,  0.26467013,
+            -0.45191971]), np.array([ 0.18724959, -0.84022002,  0.45191971,  0.5755499 ,  0.45191971,
+            -0.84022002,  0.5755499 , -0.84022002,  1.02746961, -0.26467013,0.45191971])], np.array(['no', 'yes'], dtype='<U3'), ['humidity_high', 'humidity_low', 'humidity_normal', 'outlook_outcast', 'outlook_rain', 'outlook_sunny', 'temp_cool', 'temp_hot', 'windy_strong', 'windy_weak']]
+        
     def tearDown(self):
         pass
 
@@ -78,14 +83,18 @@ class LogisticRegressionTest(unittest.TestCase):
         self.assertEqual(prediction,self.test_list)
 
     def test_predict(self):
-
-        model = [[np.array([-0.18724959,  0.84022002, -0.45191971, -0.5755499 , -0.45191971,
-            0.84022002, -0.5755499 ,  0.84022002, -1.02746961,  0.26467013,
-            -0.45191971]), np.array([ 0.18724959, -0.84022002,  0.45191971,  0.5755499 ,  0.45191971,
-            -0.84022002,  0.5755499 , -0.84022002,  1.02746961, -0.26467013,0.45191971])], np.array(['no', 'yes'], dtype='<U3'), ['humidity_high', 'humidity_low', 'humidity_normal', 'outlook_outcast', 'outlook_rain', 'outlook_sunny', 'temp_cool', 'temp_hot', 'windy_strong', 'windy_weak']]
         log=LogisticRegression()
-        result = log.predict(df=self.df, model=model, dummies=True)
+        result = log.predict(df=self.df, model=self.model, dummies=True)
         self.assertEqual(result, self.test_list)
-        
+    
+    @patch('app.mlprogram.algorithm.LogisticRegression.LogisticRegression.predict')
+    def test_testing(self, value):
+        features = np.array([['hot', 'strong', 'normal', 'sunny'], ['cool', 'strong', 'high', 'rain'], 
+                             ['hot', 'weak', 'low', 'outcast'], ['cool', 'strong', 'high', 'rain']])
+        target = np.array([['yes', 'no', 'yes', 'no']])
+        a = LogisticRegression()
+        result = a.testing(features, target, model=self.model)
+        self.assertEqual(result, 0)
+
 if __name__ == "__main__":
     unittest.main()

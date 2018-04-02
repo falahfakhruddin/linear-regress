@@ -77,9 +77,9 @@ class NaiveBayess(AbstractML):
         return prediction
 
 
-    def testing(self, features, target, weights=None):
+    def testing(self, features, target, model=None):
         # get prediction
-        prediction = self.predict(features, model=weights)
+        prediction = self.predict(features, model=model)
 
         # calculate error
         error = 0
