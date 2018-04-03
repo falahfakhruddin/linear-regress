@@ -62,6 +62,7 @@ class SklearnNeuralNet(AbstractML):
         return error
 
 if __name__ == "__main__":
+    """
     datafile = "irisdataset"
     label = "species"
     type = "classification"
@@ -76,4 +77,4 @@ if __name__ == "__main__":
     model = mlp.training(df=df , label=label , type=type , dummies=dummies)
 
     predicton = mlp.predict(df=df , model=model , dummies=dummies)
-
+    """
