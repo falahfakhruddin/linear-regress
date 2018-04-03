@@ -93,14 +93,15 @@ class MultiVariateRegression(AbstractML):
       def testing(self, features, target, model=None):
           #getprediction
           prediction = self.predict(features, model=model)
-
+          
           #calculate error
-          error = np.sum(abs(prediction - target))
+          error = np.sum(abs(np.array(prediction) - target))
           error = np.sum(error)/len(target)
           return error
 
 if __name__ == "__main__":
-
+    
+    """
     datafile = "homeprice"
     label = "Price"
     type = "regression"
@@ -118,9 +119,8 @@ if __name__ == "__main__":
     #predict
     prediction= multipleReg.predict(df=df, model=model, dummies=dummies)
 
-"""
     #testing method
     error = multipleReg.testing(features, target)
     print ("\nError : %f" %error )
-"""
+    """
 

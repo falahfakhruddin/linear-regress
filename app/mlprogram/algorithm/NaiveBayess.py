@@ -91,6 +91,8 @@ class NaiveBayess(AbstractML):
         return float(error)
 
 if __name__ == "__main__":
+    
+    """
     #get collection
     datafile = "playtennis_FeatureSelection_DataCleaning2"
     label = "play"
@@ -113,3 +115,4 @@ if __name__ == "__main__":
 
     #predict
     predicton = nb.predict(df=df , model=model)
+    """

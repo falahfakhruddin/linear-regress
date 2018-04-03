@@ -19,7 +19,8 @@ class FeatureSelection(AbstractPreprocessing):
             return df.dropna(thresh=threshold)
 
 if __name__ == "__main__":
-      X = np.array([[np.NaN, np.NaN, 3, 4], [0, 3, np.NaN, 2],[1,np.NaN,3,1], [np.NaN,4,3,5],
+    """
+    X = np.array([[np.NaN, np.NaN, 3, 4], [0, 3, np.NaN, 2],[1,np.NaN,3,1], [np.NaN,4,3,5],
               [2,3,2,np.NaN],[3,np.NaN,4,2],[2,3,4,2],[1,np.NaN,4,np.NaN]])
       Y = np.array([["satu"],["dua"],["tiga"],["empat"],["lima"], ["enam"], ["tujuh"], ["delapan"]])
       XY = np.append(X, Y, axis=1)
@@ -30,7 +31,7 @@ if __name__ == "__main__":
 
       Z = np. array([1,2,3,4,5,6,7,8])
       ZT = Z.reshape(len(Z),1)
-"""
+
 def fit(self, X) :
       lengthRow = len(X[0])
       threshold = int(self.percentage * lengthRow)

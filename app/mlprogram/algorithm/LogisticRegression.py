@@ -123,6 +123,7 @@ class LogisticRegression (AbstractML):
 
 if __name__ == "__main__":
 
+      """
       datafile = "irisdataset"
       label = "species"
       type = "classification"
@@ -156,4 +157,5 @@ if __name__ == "__main__":
       for key in list(dummies_df2):
           if key not in list(dummies_df3):
               dummies_df3[key] = pd.Series(np.zeros((len(dummies_df3)), dtype=int))
-              print (key)
+      print (key)
+      """
