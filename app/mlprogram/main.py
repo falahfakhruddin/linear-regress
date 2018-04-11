@@ -1,4 +1,6 @@
 import json
+import seaborn as sns
+import matplotlib.pyplot as plt
 from app.mlprogram.validation import CrossValidation as cv
 from app.mlprogram.MLrunner import *
 from app.mlprogram.preprocessing.FeatureSelection import FeatureSelection
@@ -34,13 +36,35 @@ def evaluate(dataset, str_algo, label, method, dummies, fold):
     target = list_df[1]
     header = list_df[2]
     errors = cv.kfoldcv(algorithm, features, target, header, fold)
-    mean = sum(errors)/fold
-    return mean
+    
+    performance = None
+    if method == 'regression':
+        mean = sum(errors)/fold
+        variance = sum([(error - mean)**2 for error in errors])/fold
+        standardDeviation = variance**.5
+        performance = {'Error' : mean,
+                       'Standard Deviation' : standardDeviation}
+    
+    elif method == 'classification':
+        sum_cm = sum(errors)
+        print(sum_cm)
+        cm_df = pd.DataFrame(sum_cm)
+        plt.figure()
+        sns.heatmap(cm_df, annot=True)
+        plt.ylabel('True Label')
+        plt.xlabel('Prediction Label')
+        plt.show()
 
-def model_query():
+        #calculate accuracy
+        accuracy = sum([sum_cm[i][i] for i in range(len(sum_cm))])/np.sum(sum_cm)
+        performance = { 'Accuracy' : accuracy}
+
+    return performance
+
+def model_query(field, feature):
     def del_id(data):
         del data['_id']
         del data['create']
         return data
-    data = [del_id(temp.to_mongo()) for temp in SaveModel.objects()]
+    data = [del_id(temp.to_mongo()) for temp in SaveModel.objects(**{'{}'.format(field): feature})]
     return data

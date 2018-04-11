@@ -35,7 +35,7 @@ def predicting():
     return json.dumps({'prediction' : predict})
 
 @admin.route('/evaluate', methods = ['POST'])
-def validation():
+def evaluation():
     data = request.get_json()
     dataset = data['dataset']
     algorithm = data['algorithm']
@@ -43,9 +43,9 @@ def validation():
     method = data['method']
     dummies = data['dummies']
     fold = data['fold']
-    mean_error = main.evaluate(dataset, algorithm, target, method, dummies, fold)
-    return json.dumps({'errors' : mean_error})
-
+    performance = main.evaluate(dataset, algorithm, target, method, dummies, fold)
+    return json.dumps({'errors' : performance})
+        
 @admin.route('/training', methods=['POST'])
 def training():
     data = request.get_json()
@@ -59,7 +59,7 @@ def training():
     train_result = main.training(dataset, target, algorithm, preprocessing, method, dummies, database)
     return json.dumps({"massage" : train_result})
 
-@admin.route('/model')
-def model():
-    data = main.model_query()
+@admin.route('/model/<string:field>/<string:feature>')
+def model(field, feature):
+    data = main.model_query(field, feature)
     return json.dumps(list(data))

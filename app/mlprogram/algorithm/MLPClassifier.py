@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import pickle
+from sklearn.metrics import accuracy_score, confusion_matrix, precision_recall_fscore_support
 from sklearn.neural_network import MLPClassifier
 from app.mlprogram.Abstraction import AbstractML
 from app.mlprogram.DatabaseConnector import DatabaseConnector
@@ -53,12 +54,11 @@ class SklearnNeuralNet(AbstractML):
         return prediction
 
     def testing(self, features, target, model=None):
-        if model != None:
-            binary_mlp = model[0]
-            weights = pickle.loads(binary_mlp)
-            self.mlp = weights
-
-        error = self.mlp.score(features, target)
+        #get predcition
+        prediction = self.predict(features, model=model)
+        
+        #determine confusion matrix
+        error = confusion_matrix(target, prediction)
         return error
 
 if __name__ == "__main__":

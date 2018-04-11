@@ -1,8 +1,11 @@
 import pandas as pd
-from app.mlprogram.Abstraction import AbstractML
 import collections
+import seaborn as sns
+import matplotlib.pyplot as plt
+from app.mlprogram.Abstraction import AbstractML
 from ..DatabaseConnector import DatabaseConnector
 from app.mlprogram import tools as tl
+from sklearn.metrics import accuracy_score, confusion_matrix, precision_recall_fscore_support
 
 class NaiveBayess(AbstractML):
     def __init__(self):
@@ -80,15 +83,10 @@ class NaiveBayess(AbstractML):
     def testing(self, features, target, model=None):
         # get prediction
         prediction = self.predict(features, model=model)
-
-        # calculate error
-        error = 0
-        for i in range(len(prediction)):
-            if target[i] != prediction[i]:
-                error += 1
-
-        error = float(error * 100 / len(target))
-        return float(error)
+        
+        # determine confusion matrix
+        cm = confusion_matrix(target, prediction)
+        return cm
 
 if __name__ == "__main__":
     
