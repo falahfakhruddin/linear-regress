@@ -46,9 +46,16 @@ def evaluate(dataset, str_algo, label, method, dummies, fold):
                        'Standard Deviation' : standardDeviation}
     
     elif method == 'classification':
+        # extract unique value
+        used = set()
+        unique = [x for x in target if x not in used and (used.add(x) or True)]
+        unique.sort
+        
         sum_cm = sum(errors)
         print(sum_cm)
-        cm_df = pd.DataFrame(sum_cm)
+        cm_df = pd.DataFrame(sum_cm,
+                             index = unique,
+                             columns = unique)
         plt.figure()
         sns.heatmap(cm_df, annot=True)
         plt.ylabel('True Label')

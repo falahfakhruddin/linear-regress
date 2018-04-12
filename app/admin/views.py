@@ -44,7 +44,7 @@ def evaluation():
     dummies = data['dummies']
     fold = data['fold']
     performance = main.evaluate(dataset, algorithm, target, method, dummies, fold)
-    return json.dumps({'errors' : performance})
+    return json.dumps({'performance' : performance})
         
 @admin.route('/training', methods=['POST'])
 def training():
