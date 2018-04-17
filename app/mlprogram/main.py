@@ -56,15 +56,39 @@ def evaluate(dataset, str_algo, label, method, dummies, fold):
         cm_df = pd.DataFrame(sum_cm,
                              index = unique,
                              columns = unique)
+        
+        precision = 0
+        recall = 0
+        for j in range(len(sum_cm)):
+            precision += sum_cm[j][j]/sum([sum_cm[i][j] for i in range(len(sum_cm))])
+            recall += sum_cm[j][j]/sum([sum_cm[j][i] for i in range(len(sum_cm))])
+        
+        #calculate precision
+        precision = precision/len(sum_cm)
+
+        #calculate recall
+        recall = recall/len(sum_cm)
+        
+        #calculate accuracy
+        accuracy = sum([sum_cm[i][i] for i in range(len(sum_cm))])/np.sum(sum_cm)
+        
+        """
         plt.figure()
         sns.heatmap(cm_df, annot=True)
         plt.ylabel('True Label')
         plt.xlabel('Prediction Label')
         plt.show()
+        """
 
-        #calculate accuracy
-        accuracy = sum([sum_cm[i][i] for i in range(len(sum_cm))])/np.sum(sum_cm)
-        performance = { 'Accuracy' : accuracy}
+        cm_df.index.name = 'Actual'
+        cm_df.columns.name = 'Predicted'
+        print(cm_df)
+        cm_df = cm_df.unstack().rename('value').reset_index()
+        print(pd.Series([cm_df]).to_json(orient='records'))
+        performance = { 'Precision': precision,
+                        'Recall' : recall,
+                        'Accuracy' : accuracy,
+                        'Confusion Matrix' : pd.Series([cm_df]).to_json(orient='records')}
 
     return performance
 
